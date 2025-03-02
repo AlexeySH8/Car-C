@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class SpeedPowerup : BasePowerup, ICollidable
 {
-    private float powerupDuration = 5f;
-    private float speedMultiplier = 2f;
+    private static float _defaultPowerupDuration = 5f;
+    private static float _powerupDuration = _defaultPowerupDuration;
+    private float _speedMultiplier = 2f;
     private ParticleSystem _activationParticle;
 
     void Start()
@@ -24,14 +25,20 @@ public class SpeedPowerup : BasePowerup, ICollidable
 
     private IEnumerator ActivatePowerupCourutine(PlayerController playerController)
     {
+        Debug.Log("Speed: " + _powerupDuration);
         SpawnManager.Instance.SpeedUpSpawnObstacle();
         playerController.SpeedPowerupOn();
-        MoveLeft.IncreaseSpeed(speedMultiplier);
-        yield return new WaitForSeconds(powerupDuration);
+        MoveLeft.IncreaseSpeed(_speedMultiplier);
+        yield return new WaitForSeconds(_powerupDuration);
         SpawnManager.Instance.ResetSpeedSpawnObstacle();
         playerController.SpeedTrail_FX.SetActive(false);
         playerController.SpeedPowerupOff();
         MoveLeft.ResetSpeedToDefault();
         Destroy(gameObject);
     }
+
+    public static void IncreaseSpeedDuration(float additionalDuration)
+        => _powerupDuration += additionalDuration;
+
+    public static void ResetSpeedDuration() => _powerupDuration = _defaultPowerupDuration;
 }

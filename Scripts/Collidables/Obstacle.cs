@@ -32,9 +32,6 @@ public class Obstacle : MonoBehaviour, ICollidable
         if (playerController.IsSpeedPowerupActive) return;
 
         playerController.HealthPoints.TakeDamage();
-
-        if (playerController.HealthPoints.IsPlayerDead())
-            playerController.SetGameOver();
     }
 
     private void VehicleExplosion()

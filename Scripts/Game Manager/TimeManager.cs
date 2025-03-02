@@ -7,7 +7,7 @@ public class TimeManager : MonoBehaviour
     public static TimeManager Instance { get; private set; }
 
     private float _durationDilationTime = 3f;
-    private float _cooldownDilationTime = 5f;
+    private float _cooldownDilationTime = 1f;
     private float _timeDevisior = 2f;
 
     private void Awake()
@@ -20,8 +20,6 @@ public class TimeManager : MonoBehaviour
         Instance = this;
     }
 
-    public void SlowDownTime() => StartCoroutine(SlowDownTimeCourutine());
-
     private IEnumerator SlowDownTimeCourutine()
     {
         PlayerController.Instance.TimeDilationOn();
@@ -31,6 +29,12 @@ public class TimeManager : MonoBehaviour
         yield return new WaitForSeconds(_cooldownDilationTime);
         PlayerController.Instance.TimeDilationOff();
     }
+
+    public void SlowDownTime() => StartCoroutine(SlowDownTimeCourutine());
+
+    public void PauseGame() => Time.timeScale = 0;
+
+    public void ContinueGame() => ResetTimeToDefault();
 
     private void ResetTimeToDefault() => Time.timeScale = 1;
 }

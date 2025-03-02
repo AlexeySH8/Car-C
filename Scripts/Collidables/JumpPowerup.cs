@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class JumpPowerup : BasePowerup, ICollidable
 {
-    private float powerupDuration = 7;
-    private float jumpMultiplier = 1.5f;
+    private static float _defaultPowerupDuration = 7f;
+    private static float _powerupDuration = _defaultPowerupDuration;
+    private float _jumpMultiplier = 1.5f;
     private ParticleSystem _activationParticle;
 
     void Start()
@@ -23,15 +24,21 @@ public class JumpPowerup : BasePowerup, ICollidable
 
     private IEnumerator ActivatePowerupCourutine(PlayerController playerController)
     {
+        Debug.Log("Jump: " + _powerupDuration);
         var playerJump = playerController.GetComponent<PlayerJump>();
         var defaultJumpForce = playerJump.JumpForce;
         playerController.JumpPowerupOn();
-        playerJump.IncreaseJumpForce(jumpMultiplier);
-        yield return new WaitForSeconds(powerupDuration);
+        playerJump.IncreaseJumpForce(_jumpMultiplier);
+        yield return new WaitForSeconds(_powerupDuration);
         playerController.Jump_FX.SetActive(false);
         playerController.JumpPowerupOff();
         playerJump.ResetJumpForce();
         Destroy(gameObject);
     }
+
+    public static void IncreaseSpeedDuration(float additionalDuration)
+        => _powerupDuration += additionalDuration;
+
+    public static void ResetSpeedDuration() => _powerupDuration = _defaultPowerupDuration;
 }
 

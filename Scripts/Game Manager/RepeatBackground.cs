@@ -33,8 +33,8 @@ public class RepeatBackground : MonoBehaviour
     {
         if (transform.position.x < _positionCurrentCity - _repeatWidth)
         {
-            Debug.Log("Need: " + _requiredRepeatsToNextCity);
-            Debug.Log("Current: " + PlayerController.Instance.CurrentCountRepeats);
+            //Debug.Log("Need: " + _requiredRepeatsToNextCity);
+            //Debug.Log("Current: " + PlayerController.Instance.CurrentCountRepeats);
             if (IsPlayerPassCity())
             {
                 if (CurrentCity == GameConstants.ÑitiesNumber - 1)

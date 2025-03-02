@@ -4,8 +4,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
+
+    public PlayerScore PlayerScore;
+    public PlayerHP HealthPoints;
     public GameObject SpeedTrail_FX;
     public GameObject Jump_FX;
+
     public byte CurrentCountRepeats { get; private set; }
     public bool IsGameOver { get; private set; }
     public bool IsOnRoad { get; private set; }
@@ -19,8 +23,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody _playerRb;
     private PlayerMovement _movement;
-    private PlayerJump _jump;
-    public PlayerHP HealthPoints;
+    private PlayerJump _jump;   
 
     private void Awake()
     {
@@ -30,6 +33,8 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Instance = this;
+        HealthPoints = GetComponent<PlayerHP>();
+        PlayerScore = GetComponent<PlayerScore>();
     }
 
     private void Start()
@@ -43,7 +48,6 @@ public class PlayerController : MonoBehaviour
         _playerRb = GetComponent<Rigidbody>();
         _movement = GetComponent<PlayerMovement>();
         _jump = GetComponent<PlayerJump>();
-        HealthPoints = GetComponent<PlayerHP>();
     }
 
     private void Update()
