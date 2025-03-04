@@ -8,9 +8,11 @@ public class PowerupExtender : ICardEffect
 
     public void ExecuteEffect()
     {
-        SpeedPowerup.ResetSpeedDuration();
-        JumpPowerup.ResetSpeedDuration();
-        SpeedPowerup.IncreaseSpeedDuration(_additionalDuration);
-        JumpPowerup.IncreaseSpeedDuration(_additionalDuration);
+        SpeedPowerup.ResetEffectDuration();
+        JumpPowerup.ResetEffectDuration();
+        TimeManager.ResetEffectDuration();
+        SpeedPowerup.IncreaseEffectDuration(_additionalDuration);
+        JumpPowerup.IncreaseEffectDuration(_additionalDuration);
+        TimeManager.IncreaseEffectDuration(_additionalDuration);
     }
 }

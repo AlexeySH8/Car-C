@@ -25,11 +25,12 @@ public class SpeedPowerup : BasePowerup, ICollidable
 
     private IEnumerator ActivatePowerupCourutine(PlayerController playerController)
     {
-        Debug.Log("Speed: " + _powerupDuration);
-        SpawnManager.Instance.SpeedUpSpawnObstacle();
+        SpawnManager.Instance.RemoveElementFromSpawn(gameObject.tag);
+        SpawnManager.Instance.SpeedUpSpawnObstacle(_speedMultiplier);
         playerController.SpeedPowerupOn();
         MoveLeft.IncreaseSpeed(_speedMultiplier);
         yield return new WaitForSeconds(_powerupDuration);
+        SpawnManager.Instance.AddElementToSpawn(gameObject.tag);
         SpawnManager.Instance.ResetSpeedSpawnObstacle();
         playerController.SpeedTrail_FX.SetActive(false);
         playerController.SpeedPowerupOff();
@@ -37,8 +38,8 @@ public class SpeedPowerup : BasePowerup, ICollidable
         Destroy(gameObject);
     }
 
-    public static void IncreaseSpeedDuration(float additionalDuration)
+    public static void IncreaseEffectDuration(float additionalDuration)
         => _powerupDuration += additionalDuration;
 
-    public static void ResetSpeedDuration() => _powerupDuration = _defaultPowerupDuration;
+    public static void ResetEffectDuration() => _powerupDuration = _defaultPowerupDuration;
 }

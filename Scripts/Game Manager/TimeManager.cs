@@ -6,7 +6,8 @@ public class TimeManager : MonoBehaviour
 {
     public static TimeManager Instance { get; private set; }
 
-    private float _durationDilationTime = 3f;
+    private static float _defaultDurationDilationTime = 3f;
+    private static float _durationDilationTime = _defaultDurationDilationTime;
     private float _cooldownDilationTime = 1f;
     private float _timeDevisior = 2f;
 
@@ -37,4 +38,9 @@ public class TimeManager : MonoBehaviour
     public void ContinueGame() => ResetTimeToDefault();
 
     private void ResetTimeToDefault() => Time.timeScale = 1;
+
+    public static void IncreaseEffectDuration(float additionalDuration)
+        => _durationDilationTime += additionalDuration;
+
+    public static void ResetEffectDuration() => _durationDilationTime = _defaultDurationDilationTime;
 }

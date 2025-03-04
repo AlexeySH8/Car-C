@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c59e093317b3091499a5914ff744e411, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _explodedMaterial: {fileID: 2100000, guid: dc10ab8d4b2c5af45ace06a3da0c192a, type: 2}
+  ScoreForObstacle: 1111
   _modelRenderer: {fileID: 6738802749055724346}
 --- !u!54 &2370580197257680198
 Rigidbody:

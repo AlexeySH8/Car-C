@@ -576,6 +576,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _screenDimming: {fileID: 1590796397}
   _cardSelectionUI: {fileID: 642904764}
+  _HPBarUI: {fileID: 1860953091}
   _scoreText: {fileID: 1025109165}
   _HPBarFilling: {fileID: 523182702}
 --- !u!1 &60505631
@@ -3399,7 +3400,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.45571983, y: 0.036348756}
   m_AnchorMax: {x: 0.5407686, y: 0.142}
-  m_AnchoredPosition: {x: 3.5, y: -7.000061}
+  m_AnchoredPosition: {x: 3.5, y: -7.000122}
   m_SizeDelta: {x: -3, y: -84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &507966821
@@ -7665,7 +7666,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36.75
+  m_fontSize: 37.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10097,6 +10098,7 @@ MonoBehaviour:
   - {fileID: 9087789786585770699, guid: 2cfa4aad599ae4b4aa7d55a10349bab4, type: 3}
   - {fileID: 9065541187368479529, guid: e6ab8a44919be854c98cd485683a418f, type: 3}
   - {fileID: 2111740204882378500, guid: 8cb79a4d242535d48b8b5397acdf544e, type: 3}
+  AccessibleObstacles: []
 --- !u!1 &1318334302
 GameObject:
   m_ObjectHideFlags: 0
@@ -13289,7 +13291,7 @@ Transform:
   m_GameObject: {fileID: 1673417751}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -82, y: -93, z: -390}
+  m_LocalPosition: {x: 0, y: -93, z: -390}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13446,7 +13448,7 @@ Transform:
   m_GameObject: {fileID: 1699083459}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 102, y: -93, z: -390}
+  m_LocalPosition: {x: 3479, y: -93, z: -390}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14671,7 +14673,7 @@ GameObject:
   - component: {fileID: 1860953094}
   - component: {fileID: 1860953093}
   m_Layer: 5
-  m_Name: HPBarImage
+  m_Name: HPBarUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -16465,6 +16467,7 @@ SpriteRenderer:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1971866050}
   - {fileID: 5903297}
   - {fileID: 705507995}
   - {fileID: 963194228}
@@ -16474,5 +16477,4 @@ SceneRoots:
   - {fileID: 1808455421}
   - {fileID: 1054642563}
   - {fileID: 584251611}
-  - {fileID: 1971866050}
   - {fileID: 58444649}

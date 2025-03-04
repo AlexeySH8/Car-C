@@ -24,21 +24,22 @@ public class JumpPowerup : BasePowerup, ICollidable
 
     private IEnumerator ActivatePowerupCourutine(PlayerController playerController)
     {
-        Debug.Log("Jump: " + _powerupDuration);
         var playerJump = playerController.GetComponent<PlayerJump>();
         var defaultJumpForce = playerJump.JumpForce;
         playerController.JumpPowerupOn();
         playerJump.IncreaseJumpForce(_jumpMultiplier);
+        SpawnManager.Instance.RemoveElementFromSpawn(gameObject.tag);
         yield return new WaitForSeconds(_powerupDuration);
+        SpawnManager.Instance.AddElementToSpawn(gameObject.tag);
         playerController.Jump_FX.SetActive(false);
         playerController.JumpPowerupOff();
         playerJump.ResetJumpForce();
         Destroy(gameObject);
     }
 
-    public static void IncreaseSpeedDuration(float additionalDuration)
+    public static void IncreaseEffectDuration(float additionalDuration)
         => _powerupDuration += additionalDuration;
 
-    public static void ResetSpeedDuration() => _powerupDuration = _defaultPowerupDuration;
+    public static void ResetEffectDuration() => _powerupDuration = _defaultPowerupDuration;
 }
 

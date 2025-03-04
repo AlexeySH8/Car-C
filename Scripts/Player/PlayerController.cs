@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     public bool IsSpeedPowerupActive { get; private set; }
     public bool IsJumpPowerupActive { get; private set; }
     public bool IsTimeDilationActive { get; private set; }
+    public bool IsPerkIncreaseHPActive { get; private set; }
+    public bool IsPerkTimeDilationActive { get; private set; }
 
     private bool _isJumpRequested;
     private float _verticalInput;
@@ -42,6 +44,9 @@ public class PlayerController : MonoBehaviour
         ResetCityRepeats();
         SpeedPowerupOff();
         JumpPowerupOff();
+        TimeDilationOff();
+        PerkIncreaseHPOff();
+        PerkTimeDilationOff();
         SetOnRoad(true);
         IsGameOver = false;
         _isJumpRequested = false;
@@ -58,7 +63,8 @@ public class PlayerController : MonoBehaviour
         {
             if (IsOnRoad)
                 _isJumpRequested = true;
-            else if (!IsOnRoad && !IsTimeDilationActive)
+            else if (!IsOnRoad && !IsTimeDilationActive
+                && IsPerkTimeDilationActive)
                 TimeManager.Instance.SlowDownTime();
         }
     }
@@ -98,14 +104,17 @@ public class PlayerController : MonoBehaviour
     public void ResetCityRepeats() => CurrentCountRepeats = 0;
 
     public void SpeedPowerupOn() => IsSpeedPowerupActive = true;
-
     public void SpeedPowerupOff() => IsSpeedPowerupActive = false;
 
     public void JumpPowerupOn() => IsJumpPowerupActive = true;
-
     public void JumpPowerupOff() => IsJumpPowerupActive = false;
 
     public void TimeDilationOn() => IsTimeDilationActive = true;
-
     public void TimeDilationOff() => IsTimeDilationActive = false;
+
+    public void PerkIncreaseHPOn() => IsPerkIncreaseHPActive = true;
+    public void PerkIncreaseHPOff() => IsPerkIncreaseHPActive = false;
+
+    public void PerkTimeDilationOn() => IsPerkTimeDilationActive = true;
+    public void PerkTimeDilationOff() => IsPerkTimeDilationActive = false;
 }

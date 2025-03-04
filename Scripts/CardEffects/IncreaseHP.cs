@@ -9,6 +9,9 @@ public class IncreaseHP : ICardEffect
     public void ExecuteEffect()
     {
         UIManager.Instance.ShowHPBar();
+        SpawnManager.Instance.AddElementToSpawn("HPPowerup");
+        PlayerController.Instance
+            .PerkIncreaseHPOn();
         PlayerController.Instance
             .HealthPoints.ChangeMaxHPValue(_increasedHP);
         PlayerController.Instance

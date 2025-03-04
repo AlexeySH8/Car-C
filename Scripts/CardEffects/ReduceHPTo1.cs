@@ -10,6 +10,10 @@ public class ReduceHPTo1 : ICardEffect
     {
         UIManager.Instance.HideHPBar();
         PlayerController.Instance
+            .PerkIncreaseHPOff();
+        SpawnManager.Instance
+            .RemoveElementFromSpawn("HPPowerup");
+        PlayerController.Instance
             .HealthPoints.ChangeMaxHPValue(1);
         PlayerController.Instance
             .PlayerScore.IncreaseCurrentScoreAmount(_multiplier);

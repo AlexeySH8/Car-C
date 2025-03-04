@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -6,7 +8,8 @@ public class SpawnManager : MonoBehaviour
     public static SpawnManager Instance { get; private set; }
 
     public bool SpawnOn = true;
-    public GameObject[] Obstacles;
+    public List<GameObject> Obstacles;
+    public List<GameObject> AccessibleObstacles;
 
     private float _defaultMinTimeToResp = 0.3f;
     private float _defaultMaxTimeToResp = 0.7f;
@@ -28,6 +31,7 @@ public class SpawnManager : MonoBehaviour
 
     private void Start()
     {
+        AccessibleObstacles.AddRange(Obstacles);
         _minTimeToResp = _defaultMinTimeToResp;
         _maxTimeToResp = _defaultMaxTimeToResp;
         _spawnCoroutine = StartCoroutine(SpawnObstacleCourutine());
@@ -39,10 +43,21 @@ public class SpawnManager : MonoBehaviour
         {
             float timeToNextObstacle = Random.Range(_minTimeToResp, _maxTimeToResp);
             yield return new WaitForSeconds(timeToNextObstacle);
-            var obstacle = Obstacles[Random.Range(0, Obstacles.Length)];
+            var obstacle = AccessibleObstacles[Random.Range(0, AccessibleObstacles.Count)];
             Instantiate(obstacle, GetRandomPosition(obstacle.transform.position.y),
                 obstacle.transform.rotation);
         }
+    }
+
+    public void RemoveElementFromSpawn(string tagToRemove) =>
+        AccessibleObstacles.RemoveAll(el => el.tag == tagToRemove);
+
+    public void AddElementToSpawn(string tagToAdd)
+    {
+        GameObject elementToAdd = Obstacles
+            .FirstOrDefault(el => el.tag == tagToAdd);
+        if (elementToAdd != null)
+            AccessibleObstacles.Add(elementToAdd);
     }
 
     public void ResetSpeedSpawnObstacle()
@@ -51,10 +66,10 @@ public class SpawnManager : MonoBehaviour
         _maxTimeToResp = _defaultMaxTimeToResp;
     }
 
-    public void SpeedUpSpawnObstacle()
+    public void SpeedUpSpawnObstacle(float speedUpValue)
     {
-        _minTimeToResp /= 2;
-        _maxTimeToResp /= 2;
+        _minTimeToResp /= speedUpValue;
+        _maxTimeToResp /= speedUpValue;
     }
 
     public void PauseSpawnObstacle() => StartCoroutine(PauseSpawnObstacleCourutine());

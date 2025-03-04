@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour, ICollidable
 {
+    public int ScoreForObstacle;
     [SerializeField] private Renderer _modelRenderer;
     private ParticleSystem _explosionParticle;
     private float _impulseForce;
@@ -25,6 +26,8 @@ public class Obstacle : MonoBehaviour, ICollidable
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
+        if (playerController.IsPerkIncreaseHPActive)
+            playerController.PlayerScore.AddScore(ScoreForObstacle);
         var playerRb = playerController.GetComponent<Rigidbody>();
         if (!playerController.IsSpeedPowerupActive)
             ImpulseToPlayer(playerRb);

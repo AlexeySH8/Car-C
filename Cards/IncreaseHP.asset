@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: IncreaseHP
   m_EditorClassIdentifier: 
   CardImage: {fileID: 21300000, guid: fb17e6281ac3e8a489e3a159a4d6a6c1, type: 3}
-  CardText: 30 HP but more obstacles
+  CardText: 100 HP but points only for destroying obstacles
   CardEffect: 1

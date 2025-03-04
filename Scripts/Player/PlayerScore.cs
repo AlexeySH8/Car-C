@@ -9,7 +9,7 @@ public class PlayerScore : MonoBehaviour
 {
     public event Action<int> OnScoreChanged;
 
-    public int _currentScoreAmount;
+    private int _currentScoreAmount;
     private int _score;
     private float _scoreTimer = 0f;
     private float _scoreRate = 0.01f;
@@ -23,21 +23,27 @@ public class PlayerScore : MonoBehaviour
 
     private void Update()
     {
-        _scoreTimer += Time.deltaTime;
-        if (_scoreTimer >= _scoreRate && !PlayerController.Instance.IsGameOver)
+        if (!PlayerController.Instance.IsGameOver &&
+            !PlayerController.Instance.IsPerkIncreaseHPActive)
         {
-            AddScore();
-            _scoreTimer = 0f;
+            _scoreTimer += Time.deltaTime;
+            if (_scoreTimer >= _scoreRate)
+            {
+                AddScore(_currentScoreAmount);
+                _scoreTimer = 0f;
+            }
         }
     }
 
-    public void AddScore()
+    public void AddScore(int currentScoreAmount)
     {
-        if (_score + _currentScoreAmount < 99999999)
-            _score += _currentScoreAmount;
-        else
-            _score = 99999999;
-        OnScoreChanged?.Invoke(_score);
+        if (currentScoreAmount < 0) return;
+        int newScore = Math.Min(_score + currentScoreAmount, 99999999);
+        if (newScore != _score)
+        {
+            _score = newScore;
+            OnScoreChanged?.Invoke(_score);
+        }
     }
 
     public void IncreaseCurrentScoreAmount(sbyte multiplier)
