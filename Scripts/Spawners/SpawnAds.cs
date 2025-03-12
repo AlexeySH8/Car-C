@@ -7,7 +7,9 @@ using UnityEngine.UIElements;
 public class SpawnAds : MonoBehaviour
 {
     public static SpawnAds Instance { get; private set; }
-    public bool SpawnOn = true;
+
+    private Coroutine _spawnFrontAdsCoroutine;
+    private Coroutine _spawnBackAdsCoroutine;
     [SerializeField] private GameObject[] _backAds;
     [SerializeField] private GameObject[] _frontAds;
     public GameObject[] AllAds { get; private set; }
@@ -39,13 +41,23 @@ public class SpawnAds : MonoBehaviour
             _backAdsY, -transform.position.z);
         _frontAdsPosition = new Vector3(transform.position.x,
             _frontAdsY, transform.position.z);
-        StartCoroutine(SpawnFrontAdsCourutine());
-        StartCoroutine(SpawnBackAdsCourutine());
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableSpawnAds;
+        GameManager.Instance.OnGameOver += DisableSpawnAds;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableSpawnAds;
+        GameManager.Instance.OnGameOver -= DisableSpawnAds;
     }
 
     private IEnumerator SpawnBackAdsCourutine()
     {
-        while (SpawnOn && !PlayerController.Instance.IsGameOver)
+        while (true)
         {
             float timeToNextAds = Random.Range(_minTimeToRespBack, _maxTimeToRespBack);
             yield return new WaitForSeconds(timeToNextAds);
@@ -56,7 +68,7 @@ public class SpawnAds : MonoBehaviour
 
     private IEnumerator SpawnFrontAdsCourutine()
     {
-        while (SpawnOn && !PlayerController.Instance.IsGameOver)
+        while (true)
         {
             float timeToNextAds = Random.Range(_minTimeToRespFront, _maxTimeToRespFront);
             yield return new WaitForSeconds(timeToNextAds);
@@ -65,4 +77,25 @@ public class SpawnAds : MonoBehaviour
         }
     }
 
+    private void EnableSpawnAds()
+    {
+        if (_spawnBackAdsCoroutine == null)
+            _spawnBackAdsCoroutine = StartCoroutine(SpawnBackAdsCourutine());
+        if (_spawnFrontAdsCoroutine == null)
+            _spawnFrontAdsCoroutine = StartCoroutine(SpawnFrontAdsCourutine());
+    }
+
+    private void DisableSpawnAds()
+    {
+        if (_spawnBackAdsCoroutine != null)
+        {
+            StopCoroutine(_spawnBackAdsCoroutine);
+            _spawnBackAdsCoroutine = null;
+        }
+        if (_spawnFrontAdsCoroutine != null)
+        {
+            StopCoroutine(_spawnFrontAdsCoroutine);
+            _spawnFrontAdsCoroutine = null;
+        }
+    }
 }

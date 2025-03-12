@@ -9,6 +9,7 @@ public class PlayerScore : MonoBehaviour
 {
     public event Action<int> OnScoreChanged;
 
+    private bool _canAddScore;
     private int _currentScoreAmount;
     private int _score;
     private float _scoreTimer = 0f;
@@ -21,10 +22,21 @@ public class PlayerScore : MonoBehaviour
         _currentScoreAmount = _defaultScoreAmount;
     }
 
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableAddScore;
+        GameManager.Instance.OnGameOver += DisableAddScore;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableAddScore;
+        GameManager.Instance.OnGameOver -= DisableAddScore;
+    }
+
     private void Update()
     {
-        if (!PlayerController.Instance.IsGameOver &&
-            !PlayerController.Instance.IsPerkIncreaseHPActive)
+        if (_canAddScore && !PlayerController.Instance.Powerups.IsPerkIncreaseHPActive)
         {
             _scoreTimer += Time.deltaTime;
             if (_scoreTimer >= _scoreRate)
@@ -37,7 +49,7 @@ public class PlayerScore : MonoBehaviour
 
     public void AddScore(int currentScoreAmount)
     {
-        if (currentScoreAmount < 0) return;
+        if (!_canAddScore || currentScoreAmount < 0) return;
         int newScore = Math.Min(_score + currentScoreAmount, 99999999);
         if (newScore != _score)
         {
@@ -53,4 +65,10 @@ public class PlayerScore : MonoBehaviour
     }
 
     public void ResetCurrentScoreAmount() => _currentScoreAmount = _defaultScoreAmount;
+
+    public int GetCurrentScore() => _score;
+
+    private void EnableAddScore() => _canAddScore = true;
+
+    private void DisableAddScore() => _canAddScore = false;
 }

@@ -23,12 +23,12 @@ public class TimeManager : MonoBehaviour
 
     private IEnumerator SlowDownTimeCourutine()
     {
-        PlayerController.Instance.TimeDilationOn();
+        PlayerController.Instance.Powerups.TimeDilationOn();
         Time.timeScale /= _timeDevisior;
         yield return new WaitForSeconds(_durationDilationTime / _timeDevisior);
         ResetTimeToDefault();
         yield return new WaitForSeconds(_cooldownDilationTime);
-        PlayerController.Instance.TimeDilationOff();
+        PlayerController.Instance.Powerups.TimeDilationOff();
     }
 
     public void SlowDownTime() => StartCoroutine(SlowDownTimeCourutine());

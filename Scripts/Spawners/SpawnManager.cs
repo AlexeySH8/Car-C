@@ -7,7 +7,6 @@ public class SpawnManager : MonoBehaviour
 {
     public static SpawnManager Instance { get; private set; }
 
-    public bool SpawnOn = true;
     public List<GameObject> Obstacles;
     public List<GameObject> AccessibleObstacles;
 
@@ -34,12 +33,23 @@ public class SpawnManager : MonoBehaviour
         AccessibleObstacles.AddRange(Obstacles);
         _minTimeToResp = _defaultMinTimeToResp;
         _maxTimeToResp = _defaultMaxTimeToResp;
-        _spawnCoroutine = StartCoroutine(SpawnObstacleCourutine());
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableSpawnObstacle;
+        GameManager.Instance.OnGameOver += DisableSpawnObstacle;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableSpawnObstacle;
+        GameManager.Instance.OnGameOver -= DisableSpawnObstacle;
     }
 
     private IEnumerator SpawnObstacleCourutine()
     {
-        while (SpawnOn && !PlayerController.Instance.IsGameOver)
+        while (true)
         {
             float timeToNextObstacle = Random.Range(_minTimeToResp, _maxTimeToResp);
             yield return new WaitForSeconds(timeToNextObstacle);
@@ -90,5 +100,20 @@ public class SpawnManager : MonoBehaviour
         var x = transform.position.x;
         var z = Roads[Random.Range(0, Roads.Length)];
         return new Vector3(x, yPos, z);
+    }
+
+    private void EnableSpawnObstacle()
+    {
+        if (_spawnCoroutine == null)
+            _spawnCoroutine = StartCoroutine(SpawnObstacleCourutine());
+    }
+
+    private void DisableSpawnObstacle()
+    {
+        if (_spawnCoroutine != null)
+        {
+            StopCoroutine(_spawnCoroutine);
+            _spawnCoroutine = null;
+        }
     }
 }

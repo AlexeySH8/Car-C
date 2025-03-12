@@ -19,20 +19,20 @@ public class JumpPowerup : BasePowerup, ICollidable
     {
         playerController.Jump_FX.SetActive(true);
         ActivatePowerup(() => ActivatePowerupCourutine(playerController),
-            _activationParticle, playerController.IsJumpPowerupActive);
+            _activationParticle, playerController.Powerups.IsJumpPowerupActive);
     }
 
     private IEnumerator ActivatePowerupCourutine(PlayerController playerController)
     {
         var playerJump = playerController.GetComponent<PlayerJump>();
         var defaultJumpForce = playerJump.JumpForce;
-        playerController.JumpPowerupOn();
+        playerController.Powerups.JumpPowerupOn();
         playerJump.IncreaseJumpForce(_jumpMultiplier);
         SpawnManager.Instance.RemoveElementFromSpawn(gameObject.tag);
         yield return new WaitForSeconds(_powerupDuration);
         SpawnManager.Instance.AddElementToSpawn(gameObject.tag);
         playerController.Jump_FX.SetActive(false);
-        playerController.JumpPowerupOff();
+        playerController.Powerups.JumpPowerupOff();
         playerJump.ResetJumpForce();
         Destroy(gameObject);
     }

@@ -14,7 +14,7 @@ public class PlayerHP : MonoBehaviour
 
     void Start()
     {
-        _maxHP = 5;
+        _maxHP = 100;
         _currentHP = _maxHP;
     }
 
@@ -29,7 +29,7 @@ public class PlayerHP : MonoBehaviour
     {
         _currentHP -= _damageTaken;
         if (IsPlayerDead())
-            PlayerController.Instance.SetGameOver();
+            GameManager.Instance.GameOver();
         OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
     }
 
@@ -42,5 +42,5 @@ public class PlayerHP : MonoBehaviour
 
     private float GetCurrentHPAsPercantage() => (float)_currentHP / (float)_maxHP;
 
-    public bool IsPlayerDead() => _currentHP <= 0;
+    private bool IsPlayerDead() => _currentHP <= 0;
 }

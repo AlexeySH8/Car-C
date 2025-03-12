@@ -6,6 +6,6 @@ public class TimeDilator : ICardEffect
 {
     public void ExecuteEffect()
     {
-        PlayerController.Instance.PerkTimeDilationOn();
+        PlayerController.Instance.Powerups.PerkTimeDilationOn();
     }
 }

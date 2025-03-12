@@ -4,28 +4,22 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
+    public byte CurrentCountRepeats { get; private set; }
+    public bool IsOnRoad { get; private set; }
 
     public PlayerScore PlayerScore;
     public PlayerHP HealthPoints;
+    public PlayerPowerups Powerups;
     public GameObject SpeedTrail_FX;
     public GameObject Jump_FX;
 
-    public byte CurrentCountRepeats { get; private set; }
-    public bool IsGameOver { get; private set; }
-    public bool IsOnRoad { get; private set; }
-    public bool IsSpeedPowerupActive { get; private set; }
-    public bool IsJumpPowerupActive { get; private set; }
-    public bool IsTimeDilationActive { get; private set; }
-    public bool IsPerkIncreaseHPActive { get; private set; }
-    public bool IsPerkTimeDilationActive { get; private set; }
-
+    private Rigidbody _playerRb;
+    private PlayerMovement _movement;
+    private PlayerJump _jump;
     private bool _isJumpRequested;
     private float _verticalInput;
     private float _horizontalInput;
-
-    private Rigidbody _playerRb;
-    private PlayerMovement _movement;
-    private PlayerJump _jump;   
+    private bool _canMove;
 
     private void Awake()
     {
@@ -37,22 +31,27 @@ public class PlayerController : MonoBehaviour
         Instance = this;
         HealthPoints = GetComponent<PlayerHP>();
         PlayerScore = GetComponent<PlayerScore>();
+        Powerups = GetComponent<PlayerPowerups>();
     }
 
     private void Start()
     {
-        ResetCityRepeats();
-        SpeedPowerupOff();
-        JumpPowerupOff();
-        TimeDilationOff();
-        PerkIncreaseHPOff();
-        PerkTimeDilationOff();
-        SetOnRoad(true);
-        IsGameOver = false;
-        _isJumpRequested = false;
+        ResetPlayerParameters();
         _playerRb = GetComponent<Rigidbody>();
         _movement = GetComponent<PlayerMovement>();
         _jump = GetComponent<PlayerJump>();
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableMovement;
+        GameManager.Instance.OnGameOver += DisableMovement;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableMovement;
+        GameManager.Instance.OnGameOver -= DisableMovement;
     }
 
     private void Update()
@@ -63,15 +62,15 @@ public class PlayerController : MonoBehaviour
         {
             if (IsOnRoad)
                 _isJumpRequested = true;
-            else if (!IsOnRoad && !IsTimeDilationActive
-                && IsPerkTimeDilationActive)
+            else if (!IsOnRoad && !Powerups.IsTimeDilationActive
+                && Powerups.IsPerkTimeDilationActive)
                 TimeManager.Instance.SlowDownTime();
         }
     }
 
     void FixedUpdate()
     {
-        if (!IsGameOver)
+        if (_canMove)
         {
             if (_isJumpRequested)
             {
@@ -81,6 +80,15 @@ public class PlayerController : MonoBehaviour
             }
             _movement.MoveCar(_horizontalInput, _verticalInput, IsOnRoad);
         }
+    }
+
+    private void ResetPlayerParameters()
+    {
+        ResetCityRepeats();
+        Powerups.ResetPowerups();
+        PlayerScore.ResetCurrentScoreAmount();
+        SetOnRoad(true);
+        _isJumpRequested = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -95,26 +103,13 @@ public class PlayerController : MonoBehaviour
             collidable.CollisionWithPlayer(this);
     }
 
-    public void SetGameOver() => IsGameOver = true;
-
     public void SetOnRoad(bool value) => IsOnRoad = value;
 
     public void IncreaseCityRepeats() => CurrentCountRepeats++;
 
     public void ResetCityRepeats() => CurrentCountRepeats = 0;
 
-    public void SpeedPowerupOn() => IsSpeedPowerupActive = true;
-    public void SpeedPowerupOff() => IsSpeedPowerupActive = false;
+    private void EnableMovement() => _canMove = true;
 
-    public void JumpPowerupOn() => IsJumpPowerupActive = true;
-    public void JumpPowerupOff() => IsJumpPowerupActive = false;
-
-    public void TimeDilationOn() => IsTimeDilationActive = true;
-    public void TimeDilationOff() => IsTimeDilationActive = false;
-
-    public void PerkIncreaseHPOn() => IsPerkIncreaseHPActive = true;
-    public void PerkIncreaseHPOff() => IsPerkIncreaseHPActive = false;
-
-    public void PerkTimeDilationOn() => IsPerkTimeDilationActive = true;
-    public void PerkTimeDilationOff() => IsPerkTimeDilationActive = false;
+    private void DisableMovement() => _canMove = false;
 }

@@ -5,11 +5,24 @@ using UnityEngine;
 public class WheelRotation : MonoBehaviour
 {
     private float _speedMultiplier = 10;
+    private bool _canRotate;
 
     void Update()
     {
-        if (!PlayerController.Instance.IsGameOver)
+        if (_canRotate)
             RotateWheel();
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableRotation;
+        GameManager.Instance.OnGameOver += DisableRotation;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableRotation;
+        GameManager.Instance.OnGameOver -= DisableRotation;
     }
 
     private void RotateWheel()
@@ -18,4 +31,8 @@ public class WheelRotation : MonoBehaviour
             _speedMultiplier * Time.deltaTime;
         transform.Rotate(rotationVector);
     }
+
+    private void EnableRotation() => _canRotate = true;
+
+    private void DisableRotation() => _canRotate = false;
 }

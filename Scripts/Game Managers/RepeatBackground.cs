@@ -6,8 +6,8 @@ public class RepeatBackground : MonoBehaviour
 {
     public static byte CurrentCity { get; private set; }
     private byte _requiredRepeatsToNextCity;
-    private byte _minRepeats = 10;
-    private byte _maxRepeats = 20;
+    private byte _minRepeats = 1; // 10
+    private byte _maxRepeats = 1; // 20
     private float _repeatWidth;
     private float _cityWidth;
     private float _positionCurrentCity;
@@ -36,9 +36,10 @@ public class RepeatBackground : MonoBehaviour
             if (IsPlayerPassCity())
             {
                 if (CurrentCity == GameConstants.ÑitiesNumber - 1)
-                    PlayerController.Instance.SetGameOver();
+                   // GameManager.Instance.GameOver();
 
                 PlayerController.Instance.ResetCityRepeats();
+
                 if (CurrentCity < GameConstants.ÑitiesNumber - 1)
                 {
                     CurrentCity++;

@@ -26,13 +26,13 @@ public class Obstacle : MonoBehaviour, ICollidable
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
-        if (playerController.IsPerkIncreaseHPActive)
+        if (playerController.Powerups.IsPerkIncreaseHPActive)
             playerController.PlayerScore.AddScore(ScoreForObstacle);
         var playerRb = playerController.GetComponent<Rigidbody>();
-        if (!playerController.IsSpeedPowerupActive)
+        if (!playerController.Powerups.IsSpeedPowerupActive)
             ImpulseToPlayer(playerRb);
         VehicleExplosion();
-        if (playerController.IsSpeedPowerupActive) return;
+        if (playerController.Powerups.IsSpeedPowerupActive) return;
 
         playerController.HealthPoints.TakeDamage();
     }
