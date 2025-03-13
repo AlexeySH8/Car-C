@@ -39,12 +39,14 @@ public class SpawnManager : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableSpawnObstacle;
         GameManager.Instance.OnGameOver += DisableSpawnObstacle;
+        GameManager.Instance.OnFinishGame += DisableSpawnObstacle;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableSpawnObstacle;
         GameManager.Instance.OnGameOver -= DisableSpawnObstacle;
+        GameManager.Instance.OnFinishGame -= DisableSpawnObstacle;
     }
 
     private IEnumerator SpawnObstacleCourutine()

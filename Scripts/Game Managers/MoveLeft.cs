@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveLeft : MonoBehaviour
 {
-    private static float _defaultSpeed = 300; // 150
+    private static float _defaultSpeed = 150; // 150
     private static bool _canMoveLeftl;
     private static float _currentSpeedLeft = _defaultSpeed;
     private Rigidbody _objectRb;
@@ -18,12 +18,14 @@ public class MoveLeft : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableMoveLeft;
         GameManager.Instance.OnGameOver += DisableMoveLeft;
+        GameManager.Instance.OnFinishGame += DisableMoveLeft;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableMoveLeft;
         GameManager.Instance.OnGameOver -= DisableMoveLeft;
+        GameManager.Instance.OnFinishGame -= DisableMoveLeft;
     }
 
     private void FixedUpdate()

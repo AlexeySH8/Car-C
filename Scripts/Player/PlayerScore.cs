@@ -26,12 +26,14 @@ public class PlayerScore : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableAddScore;
         GameManager.Instance.OnGameOver += DisableAddScore;
+        GameManager.Instance.OnFinishGame += DisableAddScore;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableAddScore;
         GameManager.Instance.OnGameOver -= DisableAddScore;
+        GameManager.Instance.OnFinishGame -= DisableAddScore;
     }
 
     private void Update()

@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        ResetPosition();
         ResetPlayerParameters();
         _playerRb = GetComponent<Rigidbody>();
         _movement = GetComponent<PlayerMovement>();
@@ -46,12 +47,14 @@ public class PlayerController : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableMovement;
         GameManager.Instance.OnGameOver += DisableMovement;
+        GameManager.Instance.OnFinishGame += DisableMovement;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableMovement;
         GameManager.Instance.OnGameOver -= DisableMovement;
+        GameManager.Instance.OnFinishGame -= DisableMovement;
     }
 
     private void Update()
@@ -102,6 +105,8 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.TryGetComponent(out ICollidable collidable))
             collidable.CollisionWithPlayer(this);
     }
+
+    private void ResetPosition() => transform.position = GameConstants.StartingPlayerCarPosition;
 
     public void SetOnRoad(bool value) => IsOnRoad = value;
 

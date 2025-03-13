@@ -47,12 +47,14 @@ public class SpawnAds : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableSpawnAds;
         GameManager.Instance.OnGameOver += DisableSpawnAds;
+        GameManager.Instance.OnFinishGame += DisableSpawnAds;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableSpawnAds;
         GameManager.Instance.OnGameOver -= DisableSpawnAds;
+        GameManager.Instance.OnFinishGame -= DisableSpawnAds;
     }
 
     private IEnumerator SpawnBackAdsCourutine()

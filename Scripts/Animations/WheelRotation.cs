@@ -17,12 +17,14 @@ public class WheelRotation : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += EnableRotation;
         GameManager.Instance.OnGameOver += DisableRotation;
+        GameManager.Instance.OnFinishGame += DisableRotation;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= EnableRotation;
         GameManager.Instance.OnGameOver -= DisableRotation;
+        GameManager.Instance.OnFinishGame -= DisableRotation;
     }
 
     private void RotateWheel()

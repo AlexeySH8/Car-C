@@ -36,7 +36,7 @@ public class RepeatBackground : MonoBehaviour
             if (IsPlayerPassCity())
             {
                 if (CurrentCity == GameConstants.ÑitiesNumber - 1)
-                   // GameManager.Instance.GameOver();
+                    GameManager.Instance.FinishGame();
 
                 PlayerController.Instance.ResetCityRepeats();
 
@@ -63,5 +63,5 @@ public class RepeatBackground : MonoBehaviour
         (byte)Random.Range(_minRepeats, _maxRepeats);
 
     private float PositionCurrentCity() =>
-        GameConstants.StartingPosition.x - CurrentCity * _cityWidth;
+        GameConstants.StartingMovingEnvironmentPosition.x - CurrentCity * _cityWidth;
 }

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public event Action OnGameOver;
     public event Action OnGameStart;
-    [SerializeField] private PlayableDirector _playableDirector;
+    public event Action OnFinishGame;
 
     private void Awake()
     {
@@ -27,29 +27,34 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.ShowStartGameUI();
     }
 
-    public void StartGame()
-    {
-        StartCoroutine(StartGameCourutine());
-    }
-
     private IEnumerator StartGameCourutine()
     {
         UIManager.Instance.HideStartGameUI();
-        if (_playableDirector != null)
+        CutsceneManager.Instance.SetStartCutscene();
+        if (CutsceneManager.Instance.PlayableDirector != null)
         {
-            _playableDirector.Play();
-            yield return new WaitUntil(() => _playableDirector.state != PlayState.Playing);
+            CutsceneManager.Instance.PlayableDirector.Play();
+            yield return new WaitUntil(() => CutsceneManager.Instance.PlayableDirector.state != PlayState.Playing);
         }
         OnGameStart?.Invoke();
     }
 
-    public void RestartGame()
+    private IEnumerator FinishGameCourutine()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        CutsceneManager.Instance.SetFinishCutscene();
+        OnFinishGame?.Invoke();
+        if (CutsceneManager.Instance.PlayableDirector != null)
+        {
+            CutsceneManager.Instance.PlayableDirector.Play();
+            yield return new WaitUntil(() => CutsceneManager.Instance.PlayableDirector.state != PlayState.Playing);
+        }
     }
 
-    public void GameOver()
-    {
-        OnGameOver?.Invoke();
-    }
+    public void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    public void FinishGame() => StartCoroutine(FinishGameCourutine());
+
+    public void StartGame() => StartCoroutine(StartGameCourutine());
+
+    public void GameOver() => OnGameOver?.Invoke();
 }
