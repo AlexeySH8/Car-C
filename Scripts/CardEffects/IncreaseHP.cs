@@ -16,7 +16,7 @@ public class IncreaseHP : ICardEffect
             .Powerups.PerkIncreaseHPOn();
         PlayerController.Instance
             .HealthPoints.ChangeMaxHPValue(_increasedHP);
-        PlayerController.Instance
+        PlayerController.Instance.PlayerStatistics
             .PlayerScore.ResetCurrentScoreAmount();
     }
 }

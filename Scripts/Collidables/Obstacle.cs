@@ -8,30 +8,30 @@ public class Obstacle : MonoBehaviour, ICollidable
     public int ScoreForObstacle;
     [SerializeField] private Renderer _modelRenderer;
     private ParticleSystem _explosionParticle;
-    private float _impulseForce;
-    private float _minReboundForce;
-    private float _maxReboundForce;
-    private float _maxTorque;
+    private float _impulseForce = 5000;
+    private float _minReboundForce = 1500;
+    private float _maxReboundForce = 5000;
+    private float _maxTorque = 1;
     private Rigidbody _rb;
 
     private void Start()
     {
-        _impulseForce = 5000;
-        _minReboundForce = 1500;
-        _maxReboundForce = 5000;
-        _maxTorque = 1;
         _explosionParticle = GetComponentInChildren<ParticleSystem>();
         _rb = GetComponent<Rigidbody>();
     }
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
+        playerController.PlayerStatistics.AddObstaclesDown();
         if (playerController.Powerups.IsPerkIncreaseHPActive)
-            playerController.PlayerScore.AddScore(ScoreForObstacle);
+            playerController.PlayerStatistics.PlayerScore.AddScore(ScoreForObstacle);
         var playerRb = playerController.GetComponent<Rigidbody>();
+
         if (!playerController.Powerups.IsSpeedPowerupActive)
             ImpulseToPlayer(playerRb);
+
         VehicleExplosion();
+
         if (playerController.Powerups.IsSpeedPowerupActive) return;
 
         playerController.HealthPoints.TakeDamage();
@@ -39,6 +39,7 @@ public class Obstacle : MonoBehaviour, ICollidable
 
     private void VehicleExplosion()
     {
+        AudioManager.Instance.PlayExplosionSFX();
         _explosionParticle.Play();
         ImpulseToObstacle();
         _modelRenderer.materials = ChangeColor.Instance

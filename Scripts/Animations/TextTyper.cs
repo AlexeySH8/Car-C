@@ -20,6 +20,7 @@ public class TextTypewriter : MonoBehaviour
     {
         for (int i = 0; i < fullText.Length; i++)
         {
+            AudioManager.Instance.PlayTextTypewriterSFX();
             textMeshPro.text = fullText.Substring(0, i + 1);
             yield return new WaitForSeconds(delay);
         }

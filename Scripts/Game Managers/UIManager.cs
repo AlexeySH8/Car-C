@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
+using static UnityEditor.Rendering.FilterWindow;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,9 +14,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _cardSelectionUI;
     [SerializeField] private GameObject _startGameUI;
     [SerializeField] private GameObject _gameOverUI;
+    [SerializeField] private GameObject _finishGameUI;
     [SerializeField] private GameObject _HPBarUI;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private Image _HPBarFilling;
+    PlayerStatistics _playerStatistics;
 
     private void Awake()
     {
@@ -25,22 +28,27 @@ public class UIManager : MonoBehaviour
             return;
         }
         Instance = this;
+        _playerStatistics = PlayerController.Instance.PlayerStatistics;
     }
 
     private void OnEnable()
     {
         GameManager.Instance.OnGameStart += HUD;
         GameManager.Instance.OnGameOver += GameOverUI;
-        PlayerController.Instance.PlayerScore.OnScoreChanged += UpdateScoreUI;
+        PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged += UpdateScoreUI;
         PlayerController.Instance.HealthPoints.OnHPChanged += UpdateHPBar;
+        CardManager.Instance.OnStartCardSelection += StartCardSelectionUI;
+        CardManager.Instance.OnFinishCardSelection += FinishCardSelectionUI;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= HUD;
         GameManager.Instance.OnGameOver -= GameOverUI;
-        PlayerController.Instance.PlayerScore.OnScoreChanged -= UpdateScoreUI;
+        PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged -= UpdateScoreUI;
         PlayerController.Instance.HealthPoints.OnHPChanged -= UpdateHPBar;
+        CardManager.Instance.OnStartCardSelection -= StartCardSelectionUI;
+        CardManager.Instance.OnFinishCardSelection -= FinishCardSelectionUI;
     }
 
     private void HUD()
@@ -49,6 +57,7 @@ public class UIManager : MonoBehaviour
         ShowScore();
         ScreenDimmingOff();
         HideGameOverUI();
+        HideFinishGameUI();
     }
 
     private void GameOverUI()
@@ -56,13 +65,50 @@ public class UIManager : MonoBehaviour
         HideHPBar();
         HideScore();
         ScreenDimmingOn();
-        var finalScoreObj = _gameOverUI.transform.Find("FinalScoreText");
-        if (finalScoreObj != null)
-        {
-            var finalScoreText = finalScoreObj.GetComponent<TextMeshProUGUI>();
-            finalScoreText.text = $"score:\n{PlayerController.Instance.PlayerScore.GetCurrentScore():D8}";
-        }
+        SetUIText(_gameOverUI.transform, "FinalScoreText",
+            $"SCORE:\n{_playerStatistics.PlayerScore.GetCurrentScore():D8}");
         ShowGameOverUI();
+    }
+
+    public void FinishGameUI()
+    {
+        HideHPBar();
+        HideScore();
+        var parent = _finishGameUI.transform;
+
+        SetUIText(parent, "FinalScoreText",
+            $"SCORE:\n{_playerStatistics.PlayerScore.GetCurrentScore():D8}");
+
+        SetUIText(parent, "ObstaclesDownText",
+            $"OBSTACLES DOWN:\n{_playerStatistics.ObstaclesDown:D8}");
+
+        SetUIText(parent, "Distance TraveledText",
+            $"DISTANCE TRAVELED:\n{_playerStatistics.DistanceTraveled:D8}");
+
+        ShowFinishGameUI();
+    }
+
+    private void StartCardSelectionUI()
+    {
+        ScreenDimmingOn();
+        _cardSelectionUI.SetActive(true);
+
+    }
+
+    private void FinishCardSelectionUI()
+    {
+        ScreenDimmingOff();
+        _cardSelectionUI.SetActive(false);
+    }
+
+    private void SetUIText(Transform parent, string childName, string text)
+    {
+        var childObj = parent.Find(childName);
+        if (childObj != null)
+        {
+            var textComponent = childObj.GetComponent<TextMeshProUGUI>();
+            textComponent.text = text;
+        }
     }
 
     private void UpdateHPBar(float currentHP) => _HPBarFilling.fillAmount = currentHP;
@@ -75,9 +121,6 @@ public class UIManager : MonoBehaviour
     public void ShowScore() => _scoreText.gameObject.SetActive(true);
     public void HideScore() => _scoreText.gameObject.SetActive(false);
 
-    public void ShowCardSelection() => _cardSelectionUI.SetActive(true);
-    public void HideCardSelection() => _cardSelectionUI.SetActive(false);
-
     public void ShowHPBar() => _HPBarUI.SetActive(true);
     public void HideHPBar() => _HPBarUI.SetActive(false);
 
@@ -86,4 +129,7 @@ public class UIManager : MonoBehaviour
 
     public void ShowStartGameUI() => _startGameUI.SetActive(true);
     public void HideStartGameUI() => _startGameUI.SetActive(false);
+
+    public void ShowFinishGameUI() => _finishGameUI.SetActive(true);
+    public void HideFinishGameUI() => _finishGameUI.SetActive(false);
 }

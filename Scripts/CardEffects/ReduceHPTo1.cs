@@ -15,7 +15,7 @@ public class ReduceHPTo1 : ICardEffect
             .RemoveElementFromSpawn("HPPowerup");
         PlayerController.Instance
             .HealthPoints.ChangeMaxHPValue(1);
-        PlayerController.Instance
+        PlayerController.Instance.PlayerStatistics
             .PlayerScore.IncreaseCurrentScoreAmount(_multiplier);
     }
 }

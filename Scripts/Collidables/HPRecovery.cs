@@ -14,6 +14,7 @@ public class HPRecovery : BasePowerup, ICollidable
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
+        AudioManager.Instance.PlayHPRecoverySFX();
         _activationParticle.Play();
         RemoveElement();
         playerController.HealthPoints.TakeHP();

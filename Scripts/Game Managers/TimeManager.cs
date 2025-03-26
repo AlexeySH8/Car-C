@@ -21,8 +21,26 @@ public class TimeManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        CardManager.Instance.OnStartCardSelection += PauseGame;
+        CardManager.Instance.OnFinishCardSelection += ContinueGame;
+    }
+
+    private void OnEnable()
+    {
+
+    }
+
+    private void OnDisable()
+    {
+        CardManager.Instance.OnStartCardSelection -= PauseGame;
+        CardManager.Instance.OnFinishCardSelection -= ContinueGame;
+    }
+
     private IEnumerator SlowDownTimeCourutine()
     {
+        AudioManager.Instance.PlayTimeDilationSFX();
         PlayerController.Instance.Powerups.TimeDilationOn();
         Time.timeScale /= _timeDevisior;
         yield return new WaitForSeconds(_durationDilationTime / _timeDevisior);

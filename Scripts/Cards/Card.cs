@@ -22,6 +22,7 @@ public class Card : MonoBehaviour
 
     private void OnMouseDown()
     {
+        AudioManager.Instance.PlayClickSFX();
         CardManager.Instance.AddCardToAlreadySelected(_cardInfo);
         _cardEffect.ExecuteEffect();
         CardManager.Instance.FinishCardSelection();

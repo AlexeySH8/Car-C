@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public event Action OnGameOver;
     public event Action OnGameStart;
     public event Action OnFinishGame;
+    private float _delayToRestart = 0.2f;
 
     private void Awake()
     {
@@ -24,6 +25,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        ChangeColor.Instance.ChangeSceneMaterial();
+        ChangeColor.Instance.ChangeAdsMaterials();
         UIManager.Instance.ShowStartGameUI();
     }
 
@@ -48,9 +51,19 @@ public class GameManager : MonoBehaviour
             CutsceneManager.Instance.PlayableDirector.Play();
             yield return new WaitUntil(() => CutsceneManager.Instance.PlayableDirector.state != PlayState.Playing);
         }
+        UIManager.Instance.FinishGameUI();
     }
 
-    public void RestartGame() => SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    public void RestartGame()
+    {
+        StartCoroutine(RestartWithDelay());
+    }
+
+    private IEnumerator RestartWithDelay()
+    {
+        yield return new WaitForSeconds(_delayToRestart);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     public void FinishGame() => StartCoroutine(FinishGameCourutine());
 

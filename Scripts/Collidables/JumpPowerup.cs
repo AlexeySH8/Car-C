@@ -17,6 +17,7 @@ public class JumpPowerup : BasePowerup, ICollidable
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
+        AudioManager.Instance.PlayJumpPowerupSFX();
         playerController.Jump_FX.SetActive(true);
         ActivatePowerup(() => ActivatePowerupCourutine(playerController),
             _activationParticle, playerController.Powerups.IsJumpPowerupActive);

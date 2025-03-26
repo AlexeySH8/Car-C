@@ -14,7 +14,7 @@ public class RepeatBackground : MonoBehaviour
     private float _segmentOfCityWidth;
     private float _startingPosition;
 
-    void Start()
+    private void Awake()
     {
         CurrentCity = 0; // 0 1 2
         _requiredRepeatsToNextCity = GetRandomRequiredRepeats();
@@ -24,7 +24,7 @@ public class RepeatBackground : MonoBehaviour
         _positionCurrentCity = PositionCurrentCity();
     }
 
-    void Update()
+    private void Update()
     {
         RepeatCurrentBackground();
     }
@@ -33,6 +33,8 @@ public class RepeatBackground : MonoBehaviour
     {
         if (transform.position.x < _positionCurrentCity - _repeatWidth)
         {
+            PlayerController.Instance
+                .PlayerStatistics.CountDistanceTraveled((int)_cityWidth);
             if (IsPlayerPassCity())
             {
                 if (CurrentCity == GameConstants.ÑitiesNumber - 1)

@@ -14,7 +14,7 @@ public class PlayerHP : MonoBehaviour
 
     void Start()
     {
-        _maxHP = 100;
+        _maxHP = 15;
         _currentHP = _maxHP;
     }
 

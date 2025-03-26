@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,9 @@ using UnityEngine;
 public class CardManager : MonoBehaviour
 {
     public static CardManager Instance { get; private set; }
+
+    public event Action OnStartCardSelection;
+    public event Action OnFinishCardSelection;
 
     [SerializeField] private GameObject _cardPrefab;
     [SerializeField] private Transform _cardPositionOne;
@@ -35,6 +39,16 @@ public class CardManager : MonoBehaviour
         RandomizeNewCards();
     }
 
+    private void OnEnable()
+    {
+        TriggerToNextCity.OnTriggerToNextCity += InvokeOnStartCardSelection;
+    }
+
+    private void OnDisable()
+    {
+        TriggerToNextCity.OnTriggerToNextCity -= InvokeOnStartCardSelection;
+    }
+
     public void RandomizeNewCards()
     {
         if (_cardOne != null) Destroy(_cardOne);
@@ -47,7 +61,7 @@ public class CardManager : MonoBehaviour
 
         while (randomaizedCards.Count < 2 && availableCards.Count > 0)
         {
-            CardSO randomCard = availableCards[Random.Range(0, availableCards.Count)];
+            CardSO randomCard = availableCards[UnityEngine.Random.Range(0, availableCards.Count)];
             if (!_alreadySelectedCards.Contains(randomCard) &&
                 !randomaizedCards.Contains(randomCard))
                 randomaizedCards.Add(randomCard);
@@ -60,9 +74,7 @@ public class CardManager : MonoBehaviour
     public void FinishCardSelection()
     {
         RandomizeNewCards();
-        UIManager.Instance.ScreenDimmingOff();
-        UIManager.Instance.HideCardSelection();
-        TimeManager.Instance.ContinueGame();
+        OnFinishCardSelection?.Invoke();
     }
 
     private GameObject InstantiateCard(CardSO cardSO, Transform position)
@@ -72,6 +84,8 @@ public class CardManager : MonoBehaviour
         card.Setup(cardSO, _cardEffects[cardSO.CardEffect]);
         return cardGO;
     }
+
+    private void InvokeOnStartCardSelection() => OnStartCardSelection?.Invoke();
 
     public void AddCardToAlreadySelected(CardSO card) => _alreadySelectedCards.Add(card);
 }

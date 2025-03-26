@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public byte CurrentCountRepeats { get; private set; }
     public bool IsOnRoad { get; private set; }
 
-    public PlayerScore PlayerScore;
+    public PlayerStatistics PlayerStatistics;
     public PlayerHP HealthPoints;
     public PlayerPowerups Powerups;
     public GameObject SpeedTrail_FX;
@@ -30,7 +30,7 @@ public class PlayerController : MonoBehaviour
         }
         Instance = this;
         HealthPoints = GetComponent<PlayerHP>();
-        PlayerScore = GetComponent<PlayerScore>();
+        PlayerStatistics = GetComponent<PlayerStatistics>();
         Powerups = GetComponent<PlayerPowerups>();
     }
 
@@ -65,8 +65,7 @@ public class PlayerController : MonoBehaviour
         {
             if (IsOnRoad)
                 _isJumpRequested = true;
-            else if (!IsOnRoad && !Powerups.IsTimeDilationActive
-                && Powerups.IsPerkTimeDilationActive)
+            else if (IsTimeDilationAvailable())
                 TimeManager.Instance.SlowDownTime();
         }
     }
@@ -79,6 +78,7 @@ public class PlayerController : MonoBehaviour
             {
                 IsOnRoad = false;
                 _isJumpRequested = false;
+                AudioManager.Instance.PlayJumpSFX();
                 _jump.JumpCar();
             }
             _movement.MoveCar(_horizontalInput, _verticalInput, IsOnRoad);
@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
     {
         ResetCityRepeats();
         Powerups.ResetPowerups();
-        PlayerScore.ResetCurrentScoreAmount();
+        PlayerStatistics.ResetPlayerStatistics();
         SetOnRoad(true);
         _isJumpRequested = false;
     }
@@ -107,6 +107,9 @@ public class PlayerController : MonoBehaviour
     }
 
     private void ResetPosition() => transform.position = GameConstants.StartingPlayerCarPosition;
+
+    private bool IsTimeDilationAvailable() => !IsOnRoad &&
+        !Powerups.IsTimeDilationActive && Powerups.IsPerkTimeDilationActive;
 
     public void SetOnRoad(bool value) => IsOnRoad = value;
 

@@ -26,6 +26,18 @@ public class ChangeColor : MonoBehaviour
         ChangeAdsMaterials();
     }
 
+    private void OnEnable()
+    {
+        TriggerToNextCity.OnTriggerToNextCity += ChangeSceneMaterial;
+        TriggerToNextCity.OnTriggerToNextCity += ChangeAdsMaterials;
+    }
+
+    private void OnDisable()
+    {
+        TriggerToNextCity.OnTriggerToNextCity -= ChangeSceneMaterial;
+        TriggerToNextCity.OnTriggerToNextCity -= ChangeAdsMaterials;
+    }
+
     public Material[] ChangeMaterialAfterExplosion(int length)
     {
         var materials = new Material[length];

@@ -18,6 +18,7 @@ public class SpeedPowerup : BasePowerup, ICollidable
 
     public void CollisionWithPlayer(PlayerController playerController)
     {
+        AudioManager.Instance.PlaySpeedPowerupSFX();
         playerController.SpeedTrail_FX.SetActive(true);
         ActivatePowerup(() => ActivatePowerupCourutine(playerController),
             _activationParticle, playerController.Powerups.IsSpeedPowerupActive);
