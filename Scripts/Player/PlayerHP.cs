@@ -1,21 +1,34 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHP : MonoBehaviour
 {
     public event Action<float> OnHPChanged;
 
-    private sbyte _currentHP;
-    private sbyte _maxHP;
-    private sbyte _damageTaken = 1;
-    private sbyte _healingAmount = 1;
+    private bool _canTakeDamage;
+    private byte _currentHP;
+    private byte _maxHP;
+    private byte _damageTaken = 1;
+    private byte _healingAmount = 1;
+    private float _invulnerabilityTime = 1f;
 
     void Start()
     {
-        _maxHP = 15;
+        _maxHP = 3;
         _currentHP = _maxHP;
+        _canTakeDamage = true;
+
+        GameManager.Instance.OnGameStart += EnableDamage;
+        GameManager.Instance.OnFinishGame += DisableDamage;
+        CardManager.Instance.OnFinishCardSelection += ActivateTemporaryInvincibility;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableDamage;
+        GameManager.Instance.OnFinishGame -= DisableDamage;
+        CardManager.Instance.OnFinishCardSelection -= ActivateTemporaryInvincibility;
     }
 
     public void TakeHP()
@@ -27,20 +40,37 @@ public class PlayerHP : MonoBehaviour
 
     public void TakeDamage()
     {
-        _currentHP -= _damageTaken;
-        if (IsPlayerDead())
-            GameManager.Instance.GameOver();
-        OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
+        if (_canTakeDamage)
+        {
+            _currentHP -= _damageTaken;
+            if (IsPlayerDead())
+                GameManager.Instance.GameOver();
+            OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
+        }
     }
 
-    public void ChangeMaxHPValue(sbyte newValue)
+    public void ChangeMaxHPValue(byte newValue)
     {
         _currentHP = newValue;
         _maxHP = newValue;
         OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
     }
 
+    private IEnumerator ActivateTemporaryInvincibilityCoroutine()
+    {
+        DisableDamage();
+        yield return new WaitForSeconds(_invulnerabilityTime);
+        EnableDamage();
+    }
+
+    public void ActivateTemporaryInvincibility() =>
+        StartCoroutine(ActivateTemporaryInvincibilityCoroutine());
+
     private float GetCurrentHPAsPercantage() => (float)_currentHP / (float)_maxHP;
 
     private bool IsPlayerDead() => _currentHP <= 0;
+
+    private void DisableDamage() => _canTakeDamage = false;
+
+    private void EnableDamage() => _canTakeDamage = true;
 }

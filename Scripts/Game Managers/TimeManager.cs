@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -25,15 +24,14 @@ public class TimeManager : MonoBehaviour
     {
         CardManager.Instance.OnStartCardSelection += PauseGame;
         CardManager.Instance.OnFinishCardSelection += ContinueGame;
-    }
-
-    private void OnEnable()
-    {
-
+        GameManager.Instance.OnGamePaused += PauseGame;
+        GameManager.Instance.OnGameContinued += ContinueGame;
     }
 
     private void OnDisable()
     {
+        GameManager.Instance.OnGamePaused -= PauseGame;
+        GameManager.Instance.OnGameContinued -= ContinueGame;
         CardManager.Instance.OnStartCardSelection -= PauseGame;
         CardManager.Instance.OnFinishCardSelection -= ContinueGame;
     }

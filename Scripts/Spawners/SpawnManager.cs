@@ -14,7 +14,6 @@ public class SpawnManager : MonoBehaviour
     private float _defaultMaxTimeToResp = 0.7f;
     private float _minTimeToResp;
     private float _maxTimeToResp;
-    private float _pauseSpawnTime = 10;
     private Coroutine _spawnCoroutine;
     private static readonly float[] Roads = GameConstants.Roads;
 
@@ -26,10 +25,6 @@ public class SpawnManager : MonoBehaviour
             return;
         }
         Instance = this;
-    }
-
-    private void Start()
-    {
         AccessibleObstacles.AddRange(Obstacles);
         _minTimeToResp = _defaultMinTimeToResp;
         _maxTimeToResp = _defaultMaxTimeToResp;
@@ -49,7 +44,7 @@ public class SpawnManager : MonoBehaviour
         GameManager.Instance.OnFinishGame -= DisableSpawnObstacle;
     }
 
-    private IEnumerator SpawnObstacleCourutine()
+    private IEnumerator SpawnObstacleCoroutine()
     {
         while (true)
         {
@@ -84,19 +79,6 @@ public class SpawnManager : MonoBehaviour
         _maxTimeToResp /= speedUpValue;
     }
 
-    public void PauseSpawnObstacle() => StartCoroutine(PauseSpawnObstacleCourutine());
-
-    private IEnumerator PauseSpawnObstacleCourutine()
-    {
-        if (_spawnCoroutine != null)
-        {
-            StopCoroutine(_spawnCoroutine);
-            _spawnCoroutine = null;
-        }
-        yield return new WaitForSeconds(_pauseSpawnTime);
-        _spawnCoroutine = StartCoroutine(SpawnObstacleCourutine());
-    }
-
     private Vector3 GetRandomPosition(float yPos)
     {
         var x = transform.position.x;
@@ -107,7 +89,7 @@ public class SpawnManager : MonoBehaviour
     private void EnableSpawnObstacle()
     {
         if (_spawnCoroutine == null)
-            _spawnCoroutine = StartCoroutine(SpawnObstacleCourutine());
+            _spawnCoroutine = StartCoroutine(SpawnObstacleCoroutine());
     }
 
     private void DisableSpawnObstacle()

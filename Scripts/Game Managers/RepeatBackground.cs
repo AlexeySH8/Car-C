@@ -6,8 +6,8 @@ public class RepeatBackground : MonoBehaviour
 {
     public static byte CurrentCity { get; private set; }
     private byte _requiredRepeatsToNextCity;
-    private byte _minRepeats = 1; // 10
-    private byte _maxRepeats = 1; // 20
+    private byte _minRepeats = 10; // 10
+    private byte _maxRepeats = 25; // 20
     private float _repeatWidth;
     private float _cityWidth;
     private float _positionCurrentCity;

@@ -8,6 +8,6 @@ public class TriggerToNextCity : MonoBehaviour, ICollidable
 {
     public static event Action OnTriggerToNextCity;
 
-    public void CollisionWithPlayer(PlayerController playerController) => OnTriggerToNextCity?.Invoke();
-
+    public void CollisionWithPlayer(PlayerController playerController) => 
+        OnTriggerToNextCity?.Invoke();
 }

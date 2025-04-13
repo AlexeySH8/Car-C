@@ -1,16 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerJump : MonoBehaviour
 {
     public float JumpForce { get; private set; }
-    private float defaultJumpForce = 5500;
+    private float _defaultJumpForce = 5500;
     private Rigidbody _playerRb;
 
     void Start()
     {
-        JumpForce = defaultJumpForce;
+        JumpForce = _defaultJumpForce;
         _playerRb = GetComponent<Rigidbody>();
     }
 
@@ -21,5 +19,5 @@ public class PlayerJump : MonoBehaviour
 
     public void IncreaseJumpForce(float jumpMultiplier) => JumpForce *= jumpMultiplier;
 
-    public void ResetJumpForce() => JumpForce = defaultJumpForce;
+    public void ResetJumpForce() => JumpForce = _defaultJumpForce;
 }

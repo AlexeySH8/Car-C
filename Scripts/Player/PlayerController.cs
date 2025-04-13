@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _playerRb;
     private PlayerMovement _movement;
     private PlayerJump _jump;
+    private IPlayerInput _input;
     private bool _isJumpRequested;
     private float _verticalInput;
     private float _horizontalInput;
@@ -36,32 +37,27 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        ResetPosition();
-        ResetPlayerParameters();
+        var mobileInput = FindObjectOfType<MobileInput>();
+
+#if UNITY_ANDROID || UNITY_IOS
+    _input = mobileInput;
+#else
+        mobileInput?.gameObject.SetActive(false);
+        _input = new PCInput();
+#endif      
+
         _playerRb = GetComponent<Rigidbody>();
         _movement = GetComponent<PlayerMovement>();
         _jump = GetComponent<PlayerJump>();
-    }
-
-    private void OnEnable()
-    {
-        GameManager.Instance.OnGameStart += EnableMovement;
-        GameManager.Instance.OnGameOver += DisableMovement;
-        GameManager.Instance.OnFinishGame += DisableMovement;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.Instance.OnGameStart -= EnableMovement;
-        GameManager.Instance.OnGameOver -= DisableMovement;
-        GameManager.Instance.OnFinishGame -= DisableMovement;
+        ResetPosition();
+        ResetPlayerParameters();
     }
 
     private void Update()
     {
-        _verticalInput = Input.GetAxis("Vertical");
-        _horizontalInput = Input.GetAxis("Horizontal");
-        if (Input.GetKeyDown(KeyCode.Space))
+        _verticalInput = _input.GetVertical();
+        _horizontalInput = _input.GetHorizontal();
+        if (_input.IsJumpPressed())
         {
             if (IsOnRoad)
                 _isJumpRequested = true;
@@ -83,6 +79,20 @@ public class PlayerController : MonoBehaviour
             }
             _movement.MoveCar(_horizontalInput, _verticalInput, IsOnRoad);
         }
+    }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameStart += EnableMovement;
+        GameManager.Instance.OnGameOver += DisableMovement;
+        GameManager.Instance.OnFinishGame += DisableMovement;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameStart -= EnableMovement;
+        GameManager.Instance.OnGameOver -= DisableMovement;
+        GameManager.Instance.OnFinishGame -= DisableMovement;
     }
 
     private void ResetPlayerParameters()

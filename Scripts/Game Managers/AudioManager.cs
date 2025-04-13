@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    [SerializeField] private Slider _musicSlider;
+    [SerializeField] private Slider _sfxSlider;
     [SerializeField] private AudioSource _musicSource;
     [SerializeField] private AudioSource _sfxSource;
     [SerializeField] private AudioClip[] _nightMusics;
@@ -20,6 +23,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip _timeDilationSFX;
     [SerializeField] private AudioClip _textTypewriterSFX;
     private Dictionary<byte, AudioClip[]> _musicDic;
+    private readonly string _musicVolumeString = "musicVolume";
+    private readonly string _sfxVolumeString = "sfxVolume";
 
     private void Awake()
     {
@@ -35,27 +40,31 @@ public class AudioManager : MonoBehaviour
             {1,_morningMusics},
             {2,_dayMusics}
         };
-
+        LoadVolumePrefs();
     }
 
     private void Start()
     {
         CardManager.Instance.OnStartCardSelection += PlayStartCardSelectionSFX;
-        CardManager.Instance.OnFinishCardSelection += PlayFinishCardSelectionSFX;
+        CardManager.Instance.OnFinishCardSelection += PlayMusic;
     }
 
     private void OnEnable()
     {
         GameManager.Instance.OnGameStart += PlayGameStartSFX;
         GameManager.Instance.OnGameOver += _musicSource.Stop;
+        GameManager.Instance.OnGamePaused += _musicSource.Pause;
+        GameManager.Instance.OnGameContinued += _musicSource.Play;
     }
 
     private void OnDisable()
     {
         GameManager.Instance.OnGameStart -= PlayGameStartSFX;
         GameManager.Instance.OnGameOver -= _musicSource.Stop;
+        GameManager.Instance.OnGamePaused -= _musicSource.Pause;
+        GameManager.Instance.OnGameContinued -= _musicSource.Play;
         CardManager.Instance.OnStartCardSelection -= PlayStartCardSelectionSFX;
-        CardManager.Instance.OnFinishCardSelection += PlayFinishCardSelectionSFX;
+        CardManager.Instance.OnFinishCardSelection -= PlayMusic;
     }
 
     private void PlayGameStartSFX()
@@ -71,11 +80,6 @@ public class AudioManager : MonoBehaviour
         _musicSource.Play();
     }
 
-    public void PlayFinishCardSelectionSFX()
-    {
-        PlayMusic();
-    }
-
     private void PlayMusic()
     {
         AudioClip[] currentCityPlaylist = _musicDic[RepeatBackground.CurrentCity];
@@ -89,9 +93,38 @@ public class AudioManager : MonoBehaviour
         var minPitch = 0.5f;
         var maxPitch = 2f;
         _sfxSource.pitch = Random.Range(minPitch, maxPitch);
-        _sfxSource.PlayOneShot(_explosionSFX, 0.15f);
+        _sfxSource.PlayOneShot(_explosionSFX);
         yield return new WaitForSeconds(_explosionSFX.length);
         _sfxSource.pitch = 1f;
+    }
+
+    public void ChangeMusicVolume()
+    {
+        _musicSource.volume = _musicSlider.value;
+        SaveVolumePrefs();
+    }
+
+    public void ChangeSFXVolume()
+    {
+        _sfxSource.volume = _sfxSlider.value;
+        SaveVolumePrefs();
+    }
+
+    private void SaveVolumePrefs()
+    {
+        PlayerPrefs.SetFloat(_musicVolumeString, _musicSlider.value);
+        PlayerPrefs.SetFloat(_sfxVolumeString, _sfxSlider.value);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadVolumePrefs()
+    {
+        var currentMusicValue = PlayerPrefs.GetFloat(_musicVolumeString, 1f);
+        var currentSFXValue = PlayerPrefs.GetFloat(_sfxVolumeString, 1f);
+        _musicSlider.value = currentMusicValue;
+        _sfxSlider.value = currentSFXValue;
+        _musicSource.volume = _musicSlider.value;
+        _sfxSource.volume = _sfxSlider.value;
     }
 
     public void PlayExplosionSFX() => StartCoroutine(PlayExplosionSFXCourutine());
@@ -100,13 +133,13 @@ public class AudioManager : MonoBehaviour
 
     public void PlayJumpSFX() => _sfxSource.PlayOneShot(_jumpSFX);
 
-    public void PlayHPRecoverySFX() => _sfxSource.PlayOneShot(_HPRecoverySFX, 0.5f);
+    public void PlayHPRecoverySFX() => _sfxSource.PlayOneShot(_HPRecoverySFX);
 
-    public void PlayJumpPowerupSFX() => _sfxSource.PlayOneShot(_jumpPowerupSFX, 0.5f);
+    public void PlayJumpPowerupSFX() => _sfxSource.PlayOneShot(_jumpPowerupSFX);
 
-    public void PlaySpeedPowerupSFX() => _sfxSource.PlayOneShot(_speedPowerupSFX, 0.08f);
+    public void PlaySpeedPowerupSFX() => _sfxSource.PlayOneShot(_speedPowerupSFX);
 
-    public void PlayTimeDilationSFX() => _sfxSource.PlayOneShot(_timeDilationSFX, 0.5f);
+    public void PlayTimeDilationSFX() => _sfxSource.PlayOneShot(_timeDilationSFX);
 
-    public void PlayTextTypewriterSFX() => _sfxSource.PlayOneShot(_textTypewriterSFX, 0.5f);
+    public void PlayTextTypewriterSFX() => _sfxSource.PlayOneShot(_textTypewriterSFX);
 }

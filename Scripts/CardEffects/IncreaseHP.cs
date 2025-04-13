@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class IncreaseHP : ICardEffect
 {
-    //public event Action OnIncreaseHP;
-    private sbyte _increasedHP = 100;
+    private byte _increasedHP = 100;
 
     public void ExecuteEffect()
     {

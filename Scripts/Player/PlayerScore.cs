@@ -1,25 +1,22 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerScore : MonoBehaviour
 {
     public event Action<int> OnScoreChanged;
 
+    private const int DefaultScoreAmount = 1;
+    private const int MaxScoreAmount = 99999999;
     private bool _canAddScore;
     private int _currentScoreAmount;
     private int _score;
     private float _scoreTimer = 0f;
     private float _scoreRate = 0.01f;
-    private int _defaultScoreAmount = 1;
 
-    private void Start()
+    private void Awake()
     {
         _score = 0;
-        _currentScoreAmount = _defaultScoreAmount;
+        _currentScoreAmount = DefaultScoreAmount;
     }
 
     private void OnEnable()
@@ -52,7 +49,7 @@ public class PlayerScore : MonoBehaviour
     public void AddScore(int currentScoreAmount)
     {
         if (!_canAddScore || currentScoreAmount < 0) return;
-        int newScore = Math.Min(_score + currentScoreAmount, 99999999);
+        int newScore = Math.Min(_score + currentScoreAmount, MaxScoreAmount);
         if (newScore != _score)
         {
             _score = newScore;
@@ -66,7 +63,7 @@ public class PlayerScore : MonoBehaviour
         _currentScoreAmount *= multiplier;
     }
 
-    public void ResetCurrentScoreAmount() => _currentScoreAmount = _defaultScoreAmount;
+    public void ResetCurrentScoreAmount() => _currentScoreAmount = DefaultScoreAmount;
 
     public int GetCurrentScore() => _score;
 

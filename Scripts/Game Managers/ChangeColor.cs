@@ -22,20 +22,23 @@ public class ChangeColor : MonoBehaviour
 
     private void Start()
     {
-        ChangeSceneMaterial();
-        ChangeAdsMaterials();
+        UpdateMaterialsForNextCity();
     }
 
     private void OnEnable()
     {
-        TriggerToNextCity.OnTriggerToNextCity += ChangeSceneMaterial;
-        TriggerToNextCity.OnTriggerToNextCity += ChangeAdsMaterials;
+        TriggerToNextCity.OnTriggerToNextCity += UpdateMaterialsForNextCity;
     }
 
     private void OnDisable()
     {
-        TriggerToNextCity.OnTriggerToNextCity -= ChangeSceneMaterial;
-        TriggerToNextCity.OnTriggerToNextCity -= ChangeAdsMaterials;
+        TriggerToNextCity.OnTriggerToNextCity -= UpdateMaterialsForNextCity;
+    }
+
+    private void UpdateMaterialsForNextCity()
+    {
+        ChangeSceneMaterial();
+        ChangeAdsMaterials();
     }
 
     public Material[] ChangeMaterialAfterExplosion(int length)

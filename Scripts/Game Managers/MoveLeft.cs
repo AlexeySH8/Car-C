@@ -5,7 +5,7 @@ using UnityEngine;
 public class MoveLeft : MonoBehaviour
 {
     private static float _defaultSpeed = 150; // 150
-    private static bool _canMoveLeftl;
+    private static bool _canMoveLeft;
     private static float _currentSpeedLeft = _defaultSpeed;
     private Rigidbody _objectRb;
 
@@ -30,7 +30,7 @@ public class MoveLeft : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_canMoveLeftl)
+        if (_canMoveLeft)
         {
             Vector3 newPosition = _objectRb.position + Vector3.left *
                 Time.fixedDeltaTime * _currentSpeedLeft;
@@ -45,7 +45,7 @@ public class MoveLeft : MonoBehaviour
 
     public static void ResetSpeedToDefault() => _currentSpeedLeft = _defaultSpeed;
 
-    private void EnableMoveLeft() => _canMoveLeftl = true;
+    private void EnableMoveLeft() => _canMoveLeft = true;
 
-    private void DisableMoveLeft() => _canMoveLeftl = false;
+    private void DisableMoveLeft() => _canMoveLeft = false;
 }

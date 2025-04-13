@@ -8,9 +8,13 @@ using UnityEngine.Playables;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+
     public event Action OnGameOver;
     public event Action OnGameStart;
     public event Action OnFinishGame;
+    public event Action OnGamePaused;
+    public event Action OnGameContinued;
+
     private float _delayToRestart = 0.2f;
 
     private void Awake()
@@ -23,16 +27,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
-    {
-        ChangeColor.Instance.ChangeSceneMaterial();
-        ChangeColor.Instance.ChangeAdsMaterials();
-        UIManager.Instance.ShowStartGameUI();
-    }
-
     private IEnumerator StartGameCourutine()
     {
-        UIManager.Instance.HideStartGameUI();
+        UIManager.Instance.HideMenuGameUI();
         CutsceneManager.Instance.SetStartCutscene();
         if (CutsceneManager.Instance.PlayableDirector != null)
         {
@@ -54,20 +51,21 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.FinishGameUI();
     }
 
-    public void RestartGame()
-    {
-        StartCoroutine(RestartWithDelay());
-    }
-
     private IEnumerator RestartWithDelay()
     {
         yield return new WaitForSeconds(_delayToRestart);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    public void RestartGame() => StartCoroutine(RestartWithDelay());
+
     public void FinishGame() => StartCoroutine(FinishGameCourutine());
 
     public void StartGame() => StartCoroutine(StartGameCourutine());
 
     public void GameOver() => OnGameOver?.Invoke();
+
+    public void PauseGame() => OnGamePaused?.Invoke();
+
+    public void ContinueGame() => OnGameContinued?.Invoke();
 }

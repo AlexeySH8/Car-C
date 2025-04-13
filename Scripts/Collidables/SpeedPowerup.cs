@@ -31,6 +31,7 @@ public class SpeedPowerup : BasePowerup, ICollidable
         playerController.Powerups.SpeedPowerupOn();
         MoveLeft.IncreaseSpeed(_speedMultiplier);
         yield return new WaitForSeconds(_powerupDuration);
+        playerController.HealthPoints.ActivateTemporaryInvincibility();
         SpawnManager.Instance.AddElementToSpawn(gameObject.tag);
         SpawnManager.Instance.ResetSpeedSpawnObstacle();
         playerController.SpeedTrail_FX.SetActive(false);

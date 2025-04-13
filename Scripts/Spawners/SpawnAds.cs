@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class SpawnAds : MonoBehaviour
 {
@@ -12,7 +11,7 @@ public class SpawnAds : MonoBehaviour
     private Coroutine _spawnBackAdsCoroutine;
     [SerializeField] private GameObject[] _backAds;
     [SerializeField] private GameObject[] _frontAds;
-    public GameObject[] AllAds { get; private set; }
+    public List<GameObject> AllAds { get; private set; }
 
     private Vector3 _backAdsPosition;
     private float _minTimeToRespBack = 1.5f; // 1.5
@@ -32,11 +31,9 @@ public class SpawnAds : MonoBehaviour
             return;
         }
         Instance = this;
-        AllAds = _frontAds.Concat(_backAds).ToArray();
-    }
-
-    void Start()
-    {
+        AllAds = new List<GameObject>();
+        AllAds.AddRange(_frontAds);
+        AllAds.AddRange(_backAds);
         _backAdsPosition = new Vector3(transform.position.x,
             _backAdsY, -transform.position.z);
         _frontAdsPosition = new Vector3(transform.position.x,
@@ -57,7 +54,7 @@ public class SpawnAds : MonoBehaviour
         GameManager.Instance.OnFinishGame -= DisableSpawnAds;
     }
 
-    private IEnumerator SpawnBackAdsCourutine()
+    private IEnumerator SpawnBackAdsCoroutine()
     {
         while (true)
         {
@@ -68,7 +65,7 @@ public class SpawnAds : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnFrontAdsCourutine()
+    private IEnumerator SpawnFrontAdsCoroutine()
     {
         while (true)
         {
@@ -82,9 +79,9 @@ public class SpawnAds : MonoBehaviour
     private void EnableSpawnAds()
     {
         if (_spawnBackAdsCoroutine == null)
-            _spawnBackAdsCoroutine = StartCoroutine(SpawnBackAdsCourutine());
+            _spawnBackAdsCoroutine = StartCoroutine(SpawnBackAdsCoroutine());
         if (_spawnFrontAdsCoroutine == null)
-            _spawnFrontAdsCoroutine = StartCoroutine(SpawnFrontAdsCourutine());
+            _spawnFrontAdsCoroutine = StartCoroutine(SpawnFrontAdsCoroutine());
     }
 
     private void DisableSpawnAds()

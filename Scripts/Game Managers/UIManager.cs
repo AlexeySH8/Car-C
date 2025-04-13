@@ -12,12 +12,15 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject _screenDimming;
     [SerializeField] private GameObject _cardSelectionUI;
-    [SerializeField] private GameObject _startGameUI;
+    [SerializeField] private GameObject _menuGameUI;
     [SerializeField] private GameObject _gameOverUI;
     [SerializeField] private GameObject _finishGameUI;
+    [SerializeField] private GameObject _audioUI;
+    [SerializeField] private GameObject _pauseGameUI;
     [SerializeField] private GameObject _HPBarUI;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private Image _HPBarFilling;
+    [SerializeField] private Button _pauseButton;
     PlayerStatistics _playerStatistics;
 
     private void Awake()
@@ -29,12 +32,18 @@ public class UIManager : MonoBehaviour
         }
         Instance = this;
         _playerStatistics = PlayerController.Instance.PlayerStatistics;
+
+        HideHUD();
+        ShowMenuGameUI();
     }
 
     private void OnEnable()
     {
-        GameManager.Instance.OnGameStart += HUD;
+        GameManager.Instance.OnGameStart += ShowHUD;
+        GameManager.Instance.OnFinishGame += HideHUD;
         GameManager.Instance.OnGameOver += GameOverUI;
+        GameManager.Instance.OnGamePaused += ShowPauseGameUI;
+        GameManager.Instance.OnGameContinued += HidePauseGameUI;
         PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged += UpdateScoreUI;
         PlayerController.Instance.HealthPoints.OnHPChanged += UpdateHPBar;
         CardManager.Instance.OnStartCardSelection += StartCardSelectionUI;
@@ -43,27 +52,47 @@ public class UIManager : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.OnGameStart -= HUD;
+        GameManager.Instance.OnGameStart -= ShowHUD;
+        GameManager.Instance.OnFinishGame -= HideHUD;
         GameManager.Instance.OnGameOver -= GameOverUI;
+        GameManager.Instance.OnGamePaused -= ShowPauseGameUI;
+        GameManager.Instance.OnGameContinued -= HidePauseGameUI;
         PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged -= UpdateScoreUI;
         PlayerController.Instance.HealthPoints.OnHPChanged -= UpdateHPBar;
         CardManager.Instance.OnStartCardSelection -= StartCardSelectionUI;
         CardManager.Instance.OnFinishCardSelection -= FinishCardSelectionUI;
     }
 
-    private void HUD()
+    public void ShowMenuGameUI()
     {
-        ShowHPBar();
-        ShowScore();
+        ShowAudioSlider();
+        _menuGameUI.SetActive(true);
+    }
+
+    public void HideMenuGameUI()
+    {
+        HideAudioSlider();
+        _menuGameUI.SetActive(false);
+    }
+
+    public void ShowPauseGameUI()
+    {
+        HidePauseButton();
+        ScreenDimmingOn();
+        ShowAudioSlider();
+        _pauseGameUI.SetActive(true);
+    }
+    public void HidePauseGameUI()
+    {
+        ShowPauseButton();
         ScreenDimmingOff();
-        HideGameOverUI();
-        HideFinishGameUI();
+        HideAudioSlider();
+        _pauseGameUI.SetActive(false);
     }
 
     private void GameOverUI()
     {
-        HideHPBar();
-        HideScore();
+        HideHUD();
         ScreenDimmingOn();
         SetUIText(_gameOverUI.transform, "FinalScoreText",
             $"SCORE:\n{_playerStatistics.PlayerScore.GetCurrentScore():D8}");
@@ -72,8 +101,7 @@ public class UIManager : MonoBehaviour
 
     public void FinishGameUI()
     {
-        HideHPBar();
-        HideScore();
+        HideHUD();
         var parent = _finishGameUI.transform;
 
         SetUIText(parent, "FinalScoreText",
@@ -88,15 +116,30 @@ public class UIManager : MonoBehaviour
         ShowFinishGameUI();
     }
 
+    private void ShowHUD()
+    {
+        ShowHPBar();
+        ShowScore();
+        ShowPauseButton();
+    }
+
+    public void HideHUD()
+    {
+        HideHPBar();
+        HideScore();
+        HidePauseButton();
+    }
+
     private void StartCardSelectionUI()
     {
+        HideHUD();
         ScreenDimmingOn();
         _cardSelectionUI.SetActive(true);
-
     }
 
     private void FinishCardSelectionUI()
     {
+        ShowHUD();
         ScreenDimmingOff();
         _cardSelectionUI.SetActive(false);
     }
@@ -124,11 +167,14 @@ public class UIManager : MonoBehaviour
     public void ShowHPBar() => _HPBarUI.SetActive(true);
     public void HideHPBar() => _HPBarUI.SetActive(false);
 
+    public void ShowPauseButton() => _pauseButton.gameObject.SetActive(true);
+    public void HidePauseButton() => _pauseButton.gameObject.SetActive(false);
+
+    public void ShowAudioSlider() => _audioUI.SetActive(true);
+    public void HideAudioSlider() => _audioUI.SetActive(false);
+
     public void ShowGameOverUI() => _gameOverUI.SetActive(true);
     public void HideGameOverUI() => _gameOverUI.SetActive(false);
-
-    public void ShowStartGameUI() => _startGameUI.SetActive(true);
-    public void HideStartGameUI() => _startGameUI.SetActive(false);
 
     public void ShowFinishGameUI() => _finishGameUI.SetActive(true);
     public void HideFinishGameUI() => _finishGameUI.SetActive(false);
