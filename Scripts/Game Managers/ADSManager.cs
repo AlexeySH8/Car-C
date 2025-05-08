@@ -27,6 +27,7 @@ public class ADSManager : MonoBehaviour
 
     private void Start()
     {
+        MobileAds.Initialize(initStatus => { });
         LoadRewardedAd();
     }
 
@@ -43,11 +44,37 @@ public class ADSManager : MonoBehaviour
 
     private void LoadRewardedAd()
     {
-        _rewardedAd = new RewardedAd(RewardedAdsUnitId);
-        AdRequest adRequest = new AdRequest.Builder().Build();
-        _rewardedAd.LoadAd(adRequest);
-        _rewardedAd.OnUserEarnedReward += HandleUserEarnedReward;
-        _rewardedAd.OnAdClosed += AdRewardClosed;
+        if (_rewardedAd != null)
+        {
+            _rewardedAd.Destroy();
+            _rewardedAd = null;
+        }
+
+        var adRequest = new AdRequest();
+
+        RewardedAd.Load(RewardedAdsUnitId, adRequest, (RewardedAd ad, LoadAdError error) =>
+        {
+            if (error != null || ad == null)
+            {
+                Debug.LogError("Rewarded ad failed to load: " + error);
+                return;
+            }
+
+            _rewardedAd = ad;
+
+            _rewardedAd.OnAdFullScreenContentClosed += () =>
+            {
+                _isAdPlaying = false;
+                LoadRewardedAd();
+            };
+
+            _rewardedAd.OnAdFullScreenContentFailed += (AdError adError) =>
+            {
+                Debug.LogError("Ad failed to show: " + adError.GetMessage());
+                _isAdPlaying = false;
+                LoadRewardedAd();
+            };
+        });
     }
 
     public void LaunchRewardedAd(Action<bool> onAdResult) => StartCoroutine(LaunchRewardedAdCoroutine(onAdResult));
@@ -95,15 +122,20 @@ public class ADSManager : MonoBehaviour
 
     public void ShowAd()
     {
-        if (_rewardedAd.IsLoaded())
+        if (_rewardedAd != null && _rewardedAd.CanShowAd())
         {
             _isAdPlaying = true;
             _isRewardReceived = false;
-            _rewardedAd.Show();
+
+            _rewardedAd.Show((Reward reward) =>
+            {
+                _isRewardReceived = true;
+            });
         }
         else
         {
-            Debug.LogWarning("Rewarded ad is not loaded yet.");
+            Debug.LogWarning("Rewarded ad is not ready yet.");
         }
     }
 }
+
