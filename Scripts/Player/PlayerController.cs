@@ -37,14 +37,15 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        var mobileInput = FindObjectOfType<MobileInput>();
-
-#if UNITY_ANDROID || UNITY_IOS
-    _input = mobileInput;
-#else
-        mobileInput?.gameObject.SetActive(false);
-        _input = new PCInput();
-#endif      
+        if (Application.isMobilePlatform)
+        {
+            _input = MobileInput.Instance;
+        }
+        else
+        {
+            MobileInput.Instance.gameObject.SetActive(false);
+            _input = new PCInput();
+        }
 
         _playerRb = GetComponent<Rigidbody>();
         _movement = GetComponent<PlayerMovement>();

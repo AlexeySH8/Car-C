@@ -3,36 +3,21 @@ using UnityEngine.UI;
 
 public class MobileInput : MonoBehaviour, IPlayerInput
 {
+    public static MobileInput Instance { get; private set; }
+
     [SerializeField] private Joystick _joystick;
     [SerializeField] private Button _jumpButton;
     private bool _jumpPressed;
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
         _jumpButton.onClick.AddListener(OnJumpButtonPressed);
-        HideMobileInputUI();
-    }
-
-    private void Start()
-    {
-        GameManager.Instance.OnGameStart += ShowMobileInputUI;
-        GameManager.Instance.OnFinishGame += HideMobileInputUI;
-        GameManager.Instance.OnGameOver += HideMobileInputUI;
-        GameManager.Instance.OnGamePaused += HideMobileInputUI;
-        GameManager.Instance.OnGameContinued += ShowMobileInputUI;
-        CardManager.Instance.OnStartCardSelection += HideMobileInputUI;
-        CardManager.Instance.OnFinishCardSelection += ShowMobileInputUI;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.Instance.OnGameStart -= ShowMobileInputUI;
-        GameManager.Instance.OnFinishGame -= HideMobileInputUI;
-        GameManager.Instance.OnGameOver -= HideMobileInputUI;
-        GameManager.Instance.OnGamePaused -= HideMobileInputUI;
-        GameManager.Instance.OnGameContinued -= ShowMobileInputUI;
-        CardManager.Instance.OnStartCardSelection -= HideMobileInputUI;
-        CardManager.Instance.OnFinishCardSelection -= ShowMobileInputUI;
     }
 
     public bool IsJumpPressed()
@@ -45,13 +30,13 @@ public class MobileInput : MonoBehaviour, IPlayerInput
         return false;
     }
 
-    private void ShowMobileInputUI()
+    public void ShowMobileInputUI()
     {
         _joystick?.gameObject.SetActive(true);
         _jumpButton?.gameObject.SetActive(true);
     }
 
-    private void HideMobileInputUI()
+    public void HideMobileInputUI()
     {
         _joystick?.gameObject.SetActive(false);
         _jumpButton?.gameObject.SetActive(false);

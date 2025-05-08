@@ -11,7 +11,7 @@ public class PlayerHP : MonoBehaviour
     private byte _maxHP;
     private byte _damageTaken = 1;
     private byte _healingAmount = 1;
-    private float _invulnerabilityTime = 1f;
+    private float _invulnerabilityTime = 0.5f;
 
     void Start()
     {
@@ -21,6 +21,7 @@ public class PlayerHP : MonoBehaviour
 
         GameManager.Instance.OnGameStart += EnableDamage;
         GameManager.Instance.OnFinishGame += DisableDamage;
+        GameManager.Instance.OnGameOver += DisableDamage;
         CardManager.Instance.OnFinishCardSelection += ActivateTemporaryInvincibility;
     }
 
@@ -28,6 +29,7 @@ public class PlayerHP : MonoBehaviour
     {
         GameManager.Instance.OnGameStart -= EnableDamage;
         GameManager.Instance.OnFinishGame -= DisableDamage;
+        GameManager.Instance.OnGameOver -= DisableDamage;
         CardManager.Instance.OnFinishCardSelection -= ActivateTemporaryInvincibility;
     }
 
@@ -44,7 +46,18 @@ public class PlayerHP : MonoBehaviour
         {
             _currentHP -= _damageTaken;
             if (IsPlayerDead())
-                GameManager.Instance.GameOver();
+            {
+                ADSManager.Instance.LaunchRewardedAd(adWatched =>
+                {
+                    if (adWatched)
+                    {
+                        _currentHP = _maxHP;
+                        OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
+                        return;
+                    }
+                    GameManager.Instance.GameOver();
+                });
+            }
             OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
         }
     }

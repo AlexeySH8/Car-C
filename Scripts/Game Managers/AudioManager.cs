@@ -67,6 +67,34 @@ public class AudioManager : MonoBehaviour
         CardManager.Instance.OnFinishCardSelection -= PlayMusic;
     }
 
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus)
+        {
+            _musicSource.Pause();
+            _sfxSource.Pause();
+        }
+        else
+        {
+            _musicSource.UnPause();
+            _sfxSource.UnPause();
+        }
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            _musicSource.Pause();
+            _sfxSource.Pause();
+        }
+        else
+        {
+            _musicSource.UnPause();
+            _sfxSource.UnPause();
+        }
+    }
+
     private void PlayGameStartSFX()
     {
         _sfxSource.Stop();

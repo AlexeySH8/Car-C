@@ -34,8 +34,9 @@ public class GameManager : MonoBehaviour
         if (CutsceneManager.Instance.PlayableDirector != null)
         {
             CutsceneManager.Instance.PlayableDirector.Play();
-            yield return new WaitUntil(() => CutsceneManager.Instance.PlayableDirector.state != PlayState.Playing);
+            yield return new WaitForSeconds((float)CutsceneManager.Instance.PlayableDirector.duration);
         }
+        Debug.Log(CutsceneManager.Instance.PlayableDirector.state);
         OnGameStart?.Invoke();
     }
 
@@ -46,9 +47,9 @@ public class GameManager : MonoBehaviour
         if (CutsceneManager.Instance.PlayableDirector != null)
         {
             CutsceneManager.Instance.PlayableDirector.Play();
-            yield return new WaitUntil(() => CutsceneManager.Instance.PlayableDirector.state != PlayState.Playing);
+            yield return new WaitForSeconds((float)CutsceneManager.Instance.PlayableDirector.duration);
         }
-        UIManager.Instance.FinishGameUI();
+        UIManager.Instance.ShowFinishGameUI();
     }
 
     private IEnumerator RestartWithDelay()

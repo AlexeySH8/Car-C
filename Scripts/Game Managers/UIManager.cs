@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
-using static UnityEditor.Rendering.FilterWindow;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,11 +14,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject _menuGameUI;
     [SerializeField] private GameObject _gameOverUI;
     [SerializeField] private GameObject _finishGameUI;
+    [SerializeField] private GameObject _adsPanelUI;
     [SerializeField] private GameObject _audioUI;
     [SerializeField] private GameObject _pauseGameUI;
     [SerializeField] private GameObject _HPBarUI;
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private Image _HPBarFilling;
+    [SerializeField] private Image _adsTimerFilling;
     [SerializeField] private Button _pauseButton;
     PlayerStatistics _playerStatistics;
 
@@ -41,7 +42,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnGameStart += ShowHUD;
         GameManager.Instance.OnFinishGame += HideHUD;
-        GameManager.Instance.OnGameOver += GameOverUI;
+        GameManager.Instance.OnGameOver += ShowGameOverUI;
         GameManager.Instance.OnGamePaused += ShowPauseGameUI;
         GameManager.Instance.OnGameContinued += HidePauseGameUI;
         PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged += UpdateScoreUI;
@@ -54,7 +55,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.OnGameStart -= ShowHUD;
         GameManager.Instance.OnFinishGame -= HideHUD;
-        GameManager.Instance.OnGameOver -= GameOverUI;
+        GameManager.Instance.OnGameOver -= ShowGameOverUI;
         GameManager.Instance.OnGamePaused -= ShowPauseGameUI;
         GameManager.Instance.OnGameContinued -= HidePauseGameUI;
         PlayerController.Instance.PlayerStatistics.PlayerScore.OnScoreChanged -= UpdateScoreUI;
@@ -77,29 +78,31 @@ public class UIManager : MonoBehaviour
 
     public void ShowPauseGameUI()
     {
-        HidePauseButton();
+        HideHUD();
         ScreenDimmingOn();
         ShowAudioSlider();
         _pauseGameUI.SetActive(true);
     }
     public void HidePauseGameUI()
     {
-        ShowPauseButton();
+        ShowHUD();
         ScreenDimmingOff();
         HideAudioSlider();
         _pauseGameUI.SetActive(false);
     }
 
-    private void GameOverUI()
+    private void ShowGameOverUI()
     {
         HideHUD();
         ScreenDimmingOn();
         SetUIText(_gameOverUI.transform, "FinalScoreText",
             $"SCORE:\n{_playerStatistics.PlayerScore.GetCurrentScore():D8}");
-        ShowGameOverUI();
+
+        _adsPanelUI.SetActive(false);
+        _gameOverUI.SetActive(true);
     }
 
-    public void FinishGameUI()
+    public void ShowFinishGameUI()
     {
         HideHUD();
         var parent = _finishGameUI.transform;
@@ -113,7 +116,21 @@ public class UIManager : MonoBehaviour
         SetUIText(parent, "Distance TraveledText",
             $"DISTANCE TRAVELED:\n{_playerStatistics.DistanceTraveled:D8}");
 
-        ShowFinishGameUI();
+        _finishGameUI.SetActive(true);
+    }
+
+    public void ShowAdsPanelUI()
+    {
+        ScreenDimmingOn();
+        HideHUD();
+        _adsPanelUI.SetActive(true);
+    }
+
+    public void HideAdsPanelUI()
+    {
+        ScreenDimmingOff();
+        ShowHUD();
+        _adsPanelUI.SetActive(false);
     }
 
     private void ShowHUD()
@@ -121,6 +138,7 @@ public class UIManager : MonoBehaviour
         ShowHPBar();
         ShowScore();
         ShowPauseButton();
+        MobileInput.Instance.ShowMobileInputUI();
     }
 
     public void HideHUD()
@@ -128,6 +146,7 @@ public class UIManager : MonoBehaviour
         HideHPBar();
         HideScore();
         HidePauseButton();
+        MobileInput.Instance.HideMobileInputUI();
     }
 
     private void StartCardSelectionUI()
@@ -154,6 +173,8 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void UpdateADSTimer(float currentTime) => _adsTimerFilling.fillAmount = currentTime;
+
     private void UpdateHPBar(float currentHP) => _HPBarFilling.fillAmount = currentHP;
 
     private void UpdateScoreUI(int score) => _scoreText.text = $"score:\n{score:D8}";
@@ -172,10 +193,4 @@ public class UIManager : MonoBehaviour
 
     public void ShowAudioSlider() => _audioUI.SetActive(true);
     public void HideAudioSlider() => _audioUI.SetActive(false);
-
-    public void ShowGameOverUI() => _gameOverUI.SetActive(true);
-    public void HideGameOverUI() => _gameOverUI.SetActive(false);
-
-    public void ShowFinishGameUI() => _finishGameUI.SetActive(true);
-    public void HideFinishGameUI() => _finishGameUI.SetActive(false);
 }
