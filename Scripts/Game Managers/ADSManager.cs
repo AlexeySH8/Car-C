@@ -7,7 +7,7 @@ public class ADSManager : MonoBehaviour
 {
     public static ADSManager Instance { get; private set; }
 
-    private const string RewardedAdsUnitId = "ca-app-pub-3940256099942544/5224354917";
+    private const string RewardedAdsUnitId = "";
     private RewardedAd _rewardedAd;
     private float _timeToClickAds = 5f;
     private bool _isRewardReceived;

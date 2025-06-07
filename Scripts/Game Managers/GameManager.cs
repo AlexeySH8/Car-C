@@ -30,25 +30,14 @@ public class GameManager : MonoBehaviour
     private IEnumerator StartGameCourutine()
     {
         UIManager.Instance.HideMenuGameUI();
-        CutsceneManager.Instance.SetStartCutscene();
-        if (CutsceneManager.Instance.PlayableDirector != null)
-        {
-            CutsceneManager.Instance.PlayableDirector.Play();
-            yield return new WaitForSeconds((float)CutsceneManager.Instance.PlayableDirector.duration);
-        }
-        Debug.Log(CutsceneManager.Instance.PlayableDirector.state);
+        yield return CutsceneManager.Instance.PlayStartCutscene();
         OnGameStart?.Invoke();
     }
 
     private IEnumerator FinishGameCourutine()
     {
-        CutsceneManager.Instance.SetFinishCutscene();
         OnFinishGame?.Invoke();
-        if (CutsceneManager.Instance.PlayableDirector != null)
-        {
-            CutsceneManager.Instance.PlayableDirector.Play();
-            yield return new WaitForSeconds((float)CutsceneManager.Instance.PlayableDirector.duration);
-        }
+        yield return CutsceneManager.Instance.PlayFinishCutscene();
         UIManager.Instance.ShowFinishGameUI();
     }
 

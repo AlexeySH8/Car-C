@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image _HPBarFilling;
     [SerializeField] private Image _adsTimerFilling;
     [SerializeField] private Button _pauseButton;
+    [SerializeField] private Button _skipCutsceneButton;
     PlayerStatistics _playerStatistics;
 
     private void Awake()
@@ -193,4 +194,7 @@ public class UIManager : MonoBehaviour
 
     public void ShowAudioSlider() => _audioUI.SetActive(true);
     public void HideAudioSlider() => _audioUI.SetActive(false);
+
+    public void ShowSkipCutsceneButton() => _skipCutsceneButton.gameObject.SetActive(true);
+    public void HideSkipCutsceneButton() => _skipCutsceneButton.gameObject.SetActive(false);
 }

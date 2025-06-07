@@ -47,16 +47,17 @@ public class PlayerHP : MonoBehaviour
             _currentHP -= _damageTaken;
             if (IsPlayerDead())
             {
-                ADSManager.Instance.LaunchRewardedAd(adWatched =>
-                {
-                    if (adWatched)
-                    {
-                        _currentHP = _maxHP;
-                        OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
-                        return;
-                    }
-                    GameManager.Instance.GameOver();
-                });
+                GameManager.Instance.GameOver();
+                //ADSManager.Instance.LaunchRewardedAd(adWatched =>
+                //{
+                //    if (adWatched)
+                //    {
+                //        _currentHP = _maxHP;
+                //        OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
+                //        return;
+                //    }
+                //    GameManager.Instance.GameOver();
+                //});
             }
             OnHPChanged?.Invoke(GetCurrentHPAsPercantage());
         }

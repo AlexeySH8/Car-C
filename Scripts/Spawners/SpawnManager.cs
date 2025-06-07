@@ -10,8 +10,8 @@ public class SpawnManager : MonoBehaviour
     public List<GameObject> Obstacles;
     public List<GameObject> AccessibleObstacles;
 
-    private float _defaultMinTimeToResp = 0.3f;
-    private float _defaultMaxTimeToResp = 0.6f;
+    private float _defaultMinTimeToResp = 0.4f;
+    private float _defaultMaxTimeToResp = 0.7f;
     private float _minTimeToResp;
     private float _maxTimeToResp;
     private Coroutine _spawnCoroutine;
